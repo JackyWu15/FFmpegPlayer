@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.4.1)
 
 
 add_library(
-        native-lib
+        ffplayer
 
         SHARED
 
-        src/main/cpp/native-lib.cpp)
+        src/main/cpp/ffplayer.cpp)
 
 #添加ffmpeg动态库进行关联
 add_library( avcodec-57 SHARED IMPORTED)
@@ -58,7 +58,7 @@ find_library(
         log)
 
 target_link_libraries(
-        native-lib
+        ffplayer
 
         avcodec-57
         avdevice-57
