@@ -6,13 +6,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.hechuangwu.player.ffplayer.FfPlayer;
+import com.hechuangwu.player.listener.OnPlayerListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private FfPlayer mFfPlayer;
     private Button mBtPlay;
-
+    private static final String FILE_PATH = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -26,10 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void initEvent() {
         mBtPlay.setOnClickListener( this );
-        mBtPlay.setOnClickListener( new View.OnClickListener() {
+        mFfPlayer.setOnPlayerListener( new OnPlayerListener() {
             @Override
-            public void onClick(View v) {
-
+            public void OnPrepare() {
+                mFfPlayer.start();
             }
         } );
     }
@@ -41,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.bt_play:
+                mFfPlayer.setFilePath( FILE_PATH );
                 mFfPlayer.prepare();
                 break;
-
         }
     }
 }

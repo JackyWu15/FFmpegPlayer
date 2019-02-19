@@ -1,13 +1,17 @@
 
 cmake_minimum_required(VERSION 3.4.1)
-
+include_directories(src/main/cpp/include)
 
 add_library(
         ffplayer
 
         SHARED
 
-        src/main/cpp/ffplayer.cpp)
+        src/main/cpp/ffplayer.cpp
+        src/main/cpp/FfCallBcak.cpp
+        src/main/cpp/Ffmpeg.cpp
+        src/main/cpp/FfAudio.cpp
+)
 
 #添加ffmpeg动态库进行关联
 add_library( avcodec-57 SHARED IMPORTED)

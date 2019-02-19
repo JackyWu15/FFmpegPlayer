@@ -28,10 +28,10 @@ public class FfPlayer {
         this.filePath = filePath;
     }
 
-    private void setOnPlayerListener(OnPlayerListener onPlayerListener){
+    public void setOnPlayerListener(OnPlayerListener onPlayerListener){
         this.onPlayerListener = onPlayerListener;
     }
-    private void onPrepareCallBack(){
+    public void onPrepareCallBack(){
         if(this.onPlayerListener!=null){
             this.onPlayerListener.OnPrepare();
         }
@@ -50,5 +50,19 @@ public class FfPlayer {
             MyLog.e( "filePath is empty!" );
         }
     }
+    public void start(){
+        if(!TextUtils.isEmpty( filePath )){
+            new Thread( new Runnable() {
+                @Override
+                public void run() {
+                    _start();
+                }
+            } ).start();
+        }else {
+            MyLog.e( "filePath is empty!" );
+        }
+    }
+
     private native void _prepare(String filePath);
+    private native void _start();
 }
