@@ -11,6 +11,7 @@ add_library(
         src/main/cpp/FfCallBcak.cpp
         src/main/cpp/Ffmpeg.cpp
         src/main/cpp/FfAudio.cpp
+        src/main/cpp/FfQueue.cpp
 )
 
 #添加ffmpeg动态库进行关联

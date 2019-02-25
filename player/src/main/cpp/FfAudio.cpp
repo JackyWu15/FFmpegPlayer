@@ -5,5 +5,6 @@
 #include "FfAudio.h"
 
 FfAudio::FfAudio() {
-
+    this->ffQueue = new FfQueue();
+    this->ffPlayStatus = 0;
 }

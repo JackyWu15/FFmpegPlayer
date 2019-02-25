@@ -94,7 +94,6 @@ void Ffmpeg::start() {
     }
     int count = 0;
     while (true) {
-        // 读每一帧都需要一个avPacket 去读
         AVPacket *pPacket = av_packet_alloc();
         if (av_read_frame(this->avFormatContext, pPacket) == 0) {
             if (pPacket->stream_index == this->ffAudio->streamIndex) {
@@ -102,16 +101,34 @@ void Ffmpeg::start() {
                 if (LOGDEBUG) {
                 LOGI("解码到第 %d 帧", count);
                 }
+                this->ffAudio->ffQueue->setFfPlayStatus(this->ffAudio->ffPlayStatus);
+                this->ffAudio->ffQueue->pushAVPacket(pPacket);
+            } else{
+                av_packet_free(&pPacket);
+                av_free(pPacket);
+                pPacket = NULL;
             }
         } else{
+            av_packet_free(&pPacket);
+            av_free(pPacket);
+            pPacket = NULL;
             if(LOGDEBUG){
                 LOGI("decode all finished!")
                 break;
             }
         }
-        av_packet_free(&pPacket);
-        av_free(pPacket);
+
     }
 
+    while (this->ffAudio->ffQueue->getQueueSize()>0){
+        AVPacket *pPacket = av_packet_alloc();
+        this->ffAudio->ffQueue->popAVPacket(pPacket);
+        av_packet_free(&pPacket);
+        av_free(pPacket);
+        pPacket = NULL;
+    }
+    if(LOGDEBUG){
+        LOGI("the AVPacket pop is finished!");
+    }
 
 }
