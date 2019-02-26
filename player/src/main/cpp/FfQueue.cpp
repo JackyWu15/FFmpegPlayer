@@ -4,7 +4,6 @@
 //
 
 #include "FfQueue.h"
-#include "AndroidLog.h"
 FfQueue::FfQueue() {
     pthread_mutex_init(&queueMutex,NULL);
     pthread_cond_init(&queueCond,NULL);
@@ -24,9 +23,10 @@ void FfQueue::pushAVPacket(AVPacket *avPacket) {
     pthread_mutex_unlock(&queueMutex);
 }
 
-void FfQueue::popAVPacket(AVPacket *avPacket) {
+int FfQueue::popAVPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&queueMutex);
-    if(this->ffPlayStatus==0){
+
+    if(this->ffPlayStatus==1){
         while (true){
             if(avPacketQueue.size()>0){
                 AVPacket * pPacket = avPacketQueue.front();
@@ -47,7 +47,7 @@ void FfQueue::popAVPacket(AVPacket *avPacket) {
     }
     pthread_mutex_unlock(&queueMutex);
 
-
+    return 0;
 }
 
 void FfQueue::setFfPlayStatus(int ffPlayStatus) {

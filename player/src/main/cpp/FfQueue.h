@@ -7,6 +7,7 @@
 #include "queue"
 #include "pthread.h"
 #include "unistd.h"
+#include "AndroidLog.h"
 using namespace std;
 extern "C"{
 #include "libavcodec/avcodec.h"
@@ -25,7 +26,7 @@ public:
 public:
     void setFfPlayStatus(int ffPlayStatus);
     void pushAVPacket(AVPacket* avPacket);
-    void popAVPacket(AVPacket* avPacket);
+    int popAVPacket(AVPacket* avPacket);
     int getQueueSize();
 
 };

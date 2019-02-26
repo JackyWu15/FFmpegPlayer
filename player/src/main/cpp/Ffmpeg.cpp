@@ -92,8 +92,12 @@ void Ffmpeg::start() {
         }
         return;
     }
+    //开启线程，解码AVPacket并重采样生成PCM数据
+    this->ffAudio->play();
+
+    //保存AVPacket到队列中
     int count = 0;
-    while (true) {
+    while (this->ffAudio->ffPlayStatus == STATUS_PLAYING) {
         AVPacket *pPacket = av_packet_alloc();
         if (av_read_frame(this->avFormatContext, pPacket) == 0) {
             if (pPacket->stream_index == this->ffAudio->streamIndex) {
@@ -112,23 +116,20 @@ void Ffmpeg::start() {
             av_packet_free(&pPacket);
             av_free(pPacket);
             pPacket = NULL;
-            if(LOGDEBUG){
-                LOGI("decode all finished!")
-                break;
+            //出队完成退出循环
+            while (this->ffAudio->ffPlayStatus==STATUS_PLAYING){
+                if(this->ffAudio->ffQueue->getQueueSize()>0){
+                    continue;
+                } else{
+                    this->ffAudio->ffPlayStatus = STATUS_STOP;
+                }
             }
+            break;
         }
-
     }
 
-    while (this->ffAudio->ffQueue->getQueueSize()>0){
-        AVPacket *pPacket = av_packet_alloc();
-        this->ffAudio->ffQueue->popAVPacket(pPacket);
-        av_packet_free(&pPacket);
-        av_free(pPacket);
-        pPacket = NULL;
-    }
     if(LOGDEBUG){
-        LOGI("the AVPacket pop is finished!");
+        LOGI("decode all finished!")
     }
 
 }

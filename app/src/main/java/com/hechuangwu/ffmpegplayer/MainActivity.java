@@ -1,6 +1,7 @@
 package com.hechuangwu.ffmpegplayer;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -8,12 +9,13 @@ import android.widget.Button;
 import com.hechuangwu.player.ffplayer.FfPlayer;
 import com.hechuangwu.player.listener.OnPlayerListener;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private FfPlayer mFfPlayer;
     private Button mBtPlay;
-    private static final String FILE_PATH = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -42,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.bt_play:
-                mFfPlayer.setFilePath( FILE_PATH );
+                 String filePath = Environment.getExternalStorageDirectory()+File.separator+"space.mp3";
+                mFfPlayer.setFilePath( filePath );
                 mFfPlayer.prepare();
                 break;
         }
