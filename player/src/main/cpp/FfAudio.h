@@ -8,9 +8,13 @@
 #include "FfQueue.h"
 #define STATUS_PLAYING 1
 #define STATUS_STOP 2;
+#define BITRATE 48000*2*2
+
 extern "C"{
 #include "libavformat/avformat.h"
 #include "libswresample/swresample.h"
+#include "SLES/OpenSLES.h"
+#include "SLES/OpenSLES_Android.h"
 };
 
 class FfAudio {
@@ -35,12 +39,29 @@ public:
     uint8_t *outBuffer = NULL;
     //数据大小
     int dataSize;
+    SLresult slResult ;
+    //引擎类和接口
+    SLObjectItf slengineObject = NULL;
+    SLEngineItf slEngineItf = NULL;
+    //混音器
+    SLObjectItf slOutputMixObject = NULL;
+    //混音环境和参数
+    SLEnvironmentalReverbSettings slEnvironmentalReverbSettings = SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
+    SLEnvironmentalReverbItf slEnvironmentalReverbItf= NULL;
+    //播放器
+    SLObjectItf slPCMPlayerObject = NULL;
+    SLPlayItf slPlayItf = NULL;
+    //音量接口
+    SLVolumeItf slVolumeItf = NULL;
+    //输入播放器队列
+    SLAndroidSimpleBufferQueueItf  slAndroidSimpleBufferQueueItf =NULL;
 public:
     FfAudio();
     ~FfAudio();
 
     void play();
-    void resample();
+    void createOpenSLES();
+    int resample();
 
 };
 
