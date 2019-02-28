@@ -9,7 +9,7 @@ import com.hechuangwu.player.log.MyLog;
  * Created by cwh on 2019/2/15.
  * 功能:
  */
-public class FfPlayer {
+public class FFPlayer {
     static {
         System.loadLibrary("ffplayer");
         System.loadLibrary("avcodec-57");
@@ -35,9 +35,7 @@ public class FfPlayer {
         if(this.onPlayerListener!=null){
             this.onPlayerListener.OnPrepare();
         }
-
     }
-
     public void prepare(){
         if(!TextUtils.isEmpty( filePath )){
             new Thread( new Runnable() {
@@ -50,6 +48,20 @@ public class FfPlayer {
             MyLog.e( "filePath is empty!" );
         }
     }
+
+    public void onLoadCallBack(boolean type){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.OnLoad( type );
+        }
+    }
+
+    public void onPauseCallBack(boolean type){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.OnPause( type );
+        }
+    }
+
+
     public void start(){
         if(!TextUtils.isEmpty( filePath )){
             new Thread( new Runnable() {
@@ -63,6 +75,21 @@ public class FfPlayer {
         }
     }
 
+    public void pause(){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.OnPause( true );
+        }
+        _pause();
+    }
+    public void play(){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.OnPause( false );
+        }
+        _play();
+    }
+
     private native void _prepare(String filePath);
     private native void _start();
+    private native void _pause();
+    private native void _play() ;
 }

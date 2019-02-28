@@ -9,12 +9,14 @@ FFmpeg::FFmpeg(FFCallBack *ffCallBack, const char *filePath) {
     this->filePath = filePath;
 }
 
+FFmpeg::~FFmpeg() {
+
+}
 void *decodeCallBack(void *data) {
     FFmpeg *ffmpeg = (FFmpeg *) data;
     ffmpeg->decodeAudio();
     pthread_exit(&ffmpeg->decodeThread);
 }
-
 void FFmpeg::prepare() {
     pthread_create(&decodeThread, NULL, decodeCallBack, this);
 }
@@ -46,7 +48,7 @@ void FFmpeg::decodeAudio() {
     for (int i = 0; i < avFormatContext->nb_streams; i++) {
         if (avFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
             if (ffAudio == NULL) {
-                ffAudio = new FFAudio();
+                ffAudio = new FFAudio(this->ffCallBack);
                 ffAudio->streamIndex = i;
                 ffAudio->codecpar = avFormatContext->streams[i]->codecpar;
             }
@@ -93,7 +95,7 @@ void FFmpeg::start() {
         return;
     }
     //开启线程，解码AVPacket并重采样生成PCM数据
-    this->ffAudio->play();
+    this->ffAudio->start();
 
     //保存AVPacket到队列中
     int count = 0;
@@ -133,3 +135,17 @@ void FFmpeg::start() {
     }
 
 }
+
+void FFmpeg::pause() {
+    if(this->ffAudio!=NULL){
+        this->ffAudio->pause();
+    }
+}
+
+void FFmpeg::play() {
+    if(this->ffAudio!=NULL){
+        this->ffAudio->play();
+    }
+}
+
+

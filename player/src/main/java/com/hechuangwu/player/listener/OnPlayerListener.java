@@ -5,5 +5,7 @@ package com.hechuangwu.player.listener;
  * 功能:
  */
 public interface OnPlayerListener {
+    void OnLoad(boolean type);
     void OnPrepare();
+    void OnPause(boolean type);
 }

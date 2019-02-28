@@ -24,7 +24,7 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hechuangwu_player_ffplayer_FfPlayer__1prepare(JNIEnv *env, jobject instance,
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1prepare(JNIEnv *env, jobject instance,
                                                        jstring filePath_) {
     const char *filePath = env->GetStringUTFChars(filePath_, 0);
     if (ffmpeg == NULL) {
@@ -43,9 +43,27 @@ Java_com_hechuangwu_player_ffplayer_FfPlayer__1prepare(JNIEnv *env, jobject inst
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_hechuangwu_player_ffplayer_FfPlayer__1start(JNIEnv *env, jobject instance) {
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1start(JNIEnv *env, jobject instance) {
     if(ffmpeg!=NULL){
         ffmpeg->start();
+    }
+
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1pause(JNIEnv *env, jobject instance) {
+
+    if(ffmpeg!=NULL){
+        ffmpeg->pause();
+    }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1play(JNIEnv *env, jobject instance) {
+    if(ffmpeg!=NULL){
+        ffmpeg->play();
     }
 
 }

@@ -18,12 +18,14 @@ public:
     jobject jobj;
 
     jmethodID jmethod_prepare;
+    jmethodID jmethod_load;
 public:
     FFCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
     ~FFCallBack();
 
 public:
     void onPrepareCallBack(int type);
+    void onLoadCallBack(int type,bool status);
 };
 
 

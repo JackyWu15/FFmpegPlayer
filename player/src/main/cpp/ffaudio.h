@@ -6,6 +6,8 @@
 #define FFMPEGPLAYER_FFAudio_H
 
 #include "ffqueue.h"
+#include "ffcallback.h"
+#define STATUS_LOADING 0
 #define STATUS_PLAYING 1
 #define STATUS_STOP 2;
 #define BITRATE 48000*2*2
@@ -27,6 +29,8 @@ public:
     AVCodecParameters* codecpar = NULL;
     //播放状态
     int ffPlayStatus;
+    //播放回调
+    FFCallBack* ffCallBack = NULL;
     //数据队列
     FFQueue* ffQueue = NULL;
     //播放线程
@@ -56,12 +60,16 @@ public:
     //输入播放器队列
     SLAndroidSimpleBufferQueueItf  slAndroidSimpleBufferQueueItf =NULL;
 public:
-    FFAudio();
+    FFAudio(FFCallBack* ffCallBack);
     ~FFAudio();
 
-    void play();
+    void start();
     void createOpenSLES();
     int resample();
+    void pause();
+    void play();
+
+
 
 };
 

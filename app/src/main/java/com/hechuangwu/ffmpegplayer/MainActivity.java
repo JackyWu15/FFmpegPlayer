@@ -9,10 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.hechuangwu.player.ffplayer.FfPlayer;
+import com.hechuangwu.player.ffplayer.FFPlayer;
 import com.hechuangwu.player.listener.OnPlayerListener;
 
 import java.io.File;
@@ -20,10 +21,12 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private FfPlayer mFfPlayer;
+    private FFPlayer mFFmpegPlayer;
     private Button mBtPlay;
     private final static int PERMISSION_CODE = 1;
     private String mFilePath;
+    private Button mBtStart;
+    private Button mBtPause;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,35 +37,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void initView() {
         setContentView( R.layout.activity_main );
+        mBtStart = findViewById( R.id.bt_start );
+        mBtPause = findViewById( R.id.bt_pause );
         mBtPlay = findViewById( R.id.bt_play );
     }
     private void initEvent() {
+        mBtStart.setOnClickListener( this );
+        mBtPause.setOnClickListener( this );
         mBtPlay.setOnClickListener( this );
-        mFfPlayer.setOnPlayerListener( new OnPlayerListener() {
+        mFFmpegPlayer.setOnPlayerListener( new OnPlayerListener() {
+            @Override
+            public void OnLoad(boolean type) {
+                if(type){
+                    Log.i( "data", "OnLoad: >>>>加载中" );
+                }else {
+                    Log.i( "data", "OnLoad: >>>>播放中" );
+                }
+            }
             @Override
             public void OnPrepare() {
-                mFfPlayer.start();
+                mFFmpegPlayer.start();
+            }
+
+            @Override
+            public void OnPause(boolean type) {
+                if(type){
+                    Log.i( "data", "OnPause: >>>>暂停中" );
+                }else {
+                    Log.i( "data", "OnPause: >>>>播放" );
+                }
             }
         } );
     }
 
     private void initData() {
         mFilePath = Environment.getExternalStorageDirectory()+File.separator+"space.mp3";
-        mFfPlayer = new FfPlayer();
+//        mFilePath = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
+        mFFmpegPlayer = new FFPlayer();
     }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.bt_play:
+            case R.id.bt_start:
                 if (ContextCompat.checkSelfPermission( this, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED) {
                     String [] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                     ActivityCompat.requestPermissions( this, permission, PERMISSION_CODE );
                 }else {
-                    mFfPlayer.setFilePath( mFilePath );
-                    mFfPlayer.prepare();
+                    mFFmpegPlayer.setFilePath( mFilePath );
+                    mFFmpegPlayer.prepare();
                 }
-
                 break;
+            case R.id.bt_pause:
+                mFFmpegPlayer.pause();
+                break;
+            case R.id.bt_play:
+                mFFmpegPlayer.play();
+                break;
+
         }
     }
 
@@ -71,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult( requestCode, resultCode, data );
         switch (requestCode){
             case PERMISSION_CODE:
-                mFfPlayer.setFilePath( mFilePath );
-                mFfPlayer.prepare();
+                mFFmpegPlayer.setFilePath( mFilePath );
+                mFFmpegPlayer.prepare();
                 break;
         }
     }

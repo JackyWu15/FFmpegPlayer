@@ -17,9 +17,7 @@ public:
     const char* filePath = NULL;
     FFCallBack* ffCallBack = NULL;
     pthread_t decodeThread;
-    pthread_mutex_t decodeMutex;
     AVFormatContext* avFormatContext = NULL;
-    AVCodecParameters* avCodecParameters = NULL;
     FFAudio* ffAudio = NULL;
 
 public:
@@ -27,10 +25,11 @@ public:
     ~FFmpeg();
 
 public:
-    void prepare();
+    void prepare();//准备
     void decodeAudio();//初始化解码器并打开流
-    void start();
-
+    void start();//启动
+    void pause();//暂停
+    void play();//播放
 };
 
 
