@@ -2,29 +2,29 @@
 // Created by Administrator on 2019/2/18.
 //
 
-#ifndef FFMPEGPLAYER_FFMPEG_H
-#define FFMPEGPLAYER_FFMPEG_H
+#ifndef FFmpegPLAYER_FFmpeg_H
+#define FFmpegPLAYER_FFmpeg_H
 
-#include "FfCallBcak.h"
+#include "ffcallback.h"
 #include "pthread.h"
-#include "FfAudio.h"
+#include "ffaudio.h"
 extern "C"{
 #include "libavformat/avformat.h"
 };
 
-class Ffmpeg {
+class FFmpeg {
 public:
     const char* filePath = NULL;
-    FfCallBack* ffCallBack = NULL;
+    FFCallBack* ffCallBack = NULL;
     pthread_t decodeThread;
     pthread_mutex_t decodeMutex;
     AVFormatContext* avFormatContext = NULL;
     AVCodecParameters* avCodecParameters = NULL;
-    FfAudio* ffAudio = NULL;
+    FFAudio* ffAudio = NULL;
 
 public:
-    Ffmpeg(FfCallBack *ffCallBack, const char* filePath);
-    ~Ffmpeg();
+    FFmpeg(FFCallBack *ffCallBack, const char* filePath);
+    ~FFmpeg();
 
 public:
     void prepare();
@@ -34,4 +34,4 @@ public:
 };
 
 
-#endif //FFMPEGPLAYER_FFMPEG_H
+#endif //FFmpegPLAYER_FFmpeg_H

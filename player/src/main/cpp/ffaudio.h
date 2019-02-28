@@ -2,10 +2,10 @@
 //用于保存音频属性和数据
 //
 
-#ifndef FFMPEGPLAYER_FFAUDIO_H
-#define FFMPEGPLAYER_FFAUDIO_H
+#ifndef FFMPEGPLAYER_FFAudio_H
+#define FFMPEGPLAYER_FFAudio_H
 
-#include "FfQueue.h"
+#include "ffqueue.h"
 #define STATUS_PLAYING 1
 #define STATUS_STOP 2;
 #define BITRATE 48000*2*2
@@ -17,7 +17,7 @@ extern "C"{
 #include "SLES/OpenSLES_Android.h"
 };
 
-class FfAudio {
+class FFAudio {
 public:
     //解码器上下文
     AVCodecContext* avCodecContext = NULL;
@@ -28,7 +28,7 @@ public:
     //播放状态
     int ffPlayStatus;
     //数据队列
-    FfQueue* ffQueue = NULL;
+    FFQueue* ffQueue = NULL;
     //播放线程
     pthread_t pthreadPlay;
     //存放AVPacket
@@ -56,8 +56,8 @@ public:
     //输入播放器队列
     SLAndroidSimpleBufferQueueItf  slAndroidSimpleBufferQueueItf =NULL;
 public:
-    FfAudio();
-    ~FfAudio();
+    FFAudio();
+    ~FFAudio();
 
     void play();
     void createOpenSLES();
@@ -66,4 +66,4 @@ public:
 };
 
 
-#endif //FFMPEGPLAYER_FFAUDIO_H
+#endif //FFMPEGPLAYER_FFAudio_H

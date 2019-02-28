@@ -2,24 +2,24 @@
 // Created by Administrator on 2019/2/18.
 //
 
-#include "Ffmpeg.h"
+#include "ffmpeg.h"
 
-Ffmpeg::Ffmpeg(FfCallBack *ffCallBack, const char *filePath) {
+FFmpeg::FFmpeg(FFCallBack *ffCallBack, const char *filePath) {
     this->ffCallBack = ffCallBack;
     this->filePath = filePath;
 }
 
 void *decodeCallBack(void *data) {
-    Ffmpeg *ffmpeg = (Ffmpeg *) data;
+    FFmpeg *ffmpeg = (FFmpeg *) data;
     ffmpeg->decodeAudio();
     pthread_exit(&ffmpeg->decodeThread);
 }
 
-void Ffmpeg::prepare() {
+void FFmpeg::prepare() {
     pthread_create(&decodeThread, NULL, decodeCallBack, this);
 }
 
-void Ffmpeg::decodeAudio() {
+void FFmpeg::decodeAudio() {
     //注册所有解码器
     av_register_all();
     //初始化网络连接组件
@@ -46,7 +46,7 @@ void Ffmpeg::decodeAudio() {
     for (int i = 0; i < avFormatContext->nb_streams; i++) {
         if (avFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
             if (ffAudio == NULL) {
-                ffAudio = new FfAudio();
+                ffAudio = new FFAudio();
                 ffAudio->streamIndex = i;
                 ffAudio->codecpar = avFormatContext->streams[i]->codecpar;
             }
@@ -85,7 +85,7 @@ void Ffmpeg::decodeAudio() {
 }
 
 //从流中解码出每一帧
-void Ffmpeg::start() {
+void FFmpeg::start() {
     if (this->ffAudio == NULL) {
         if (LOGDEBUG) {
             LOGE("audio is null!");

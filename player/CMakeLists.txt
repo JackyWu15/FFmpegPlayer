@@ -8,10 +8,10 @@ add_library(
         SHARED
 
         src/main/cpp/ffplayer.cpp
-        src/main/cpp/FfCallBcak.cpp
-        src/main/cpp/Ffmpeg.cpp
-        src/main/cpp/FfAudio.cpp
-        src/main/cpp/FfQueue.cpp
+        src/main/cpp/ffcallback.cpp
+        src/main/cpp/ffmpeg.cpp
+        src/main/cpp/ffaudio.cpp
+        src/main/cpp/ffqueue.cpp
 )
 
 #添加ffmpeg动态库进行关联

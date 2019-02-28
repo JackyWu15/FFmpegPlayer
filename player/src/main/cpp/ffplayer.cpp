@@ -1,11 +1,11 @@
 #include <string>
-#include "Ffmpeg.h"
+#include "ffmpeg.h"
 
 using namespace std;
 
 JavaVM *javaVM;
-FfCallBack *ffCallBack;
-Ffmpeg *ffmpeg;
+FFCallBack *ffCallBack;
+FFmpeg *ffmpeg;
 
 /**
  * 获取JavaVM
@@ -30,10 +30,10 @@ Java_com_hechuangwu_player_ffplayer_FfPlayer__1prepare(JNIEnv *env, jobject inst
     if (ffmpeg == NULL) {
         if (ffCallBack == NULL) {
             //对象不能跨线程使用，需生成全局变量
-            ffCallBack = new FfCallBack(javaVM, env, env->NewGlobalRef(instance));
+            ffCallBack = new FFCallBack(javaVM, env, env->NewGlobalRef(instance));
         }
 
-        ffmpeg = new Ffmpeg(ffCallBack, filePath);
+        ffmpeg = new FFmpeg(ffCallBack, filePath);
         ffmpeg->prepare();
     }
 

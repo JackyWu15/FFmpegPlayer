@@ -7,7 +7,6 @@
 #include "android/log.h"
 #define LOGDEBUG true
 
-#define LOGD(FORMAT,...) __android_log_print(ANDROID_LOG_DEBUG,"hechuangwu",FORMAT,##__VA_ARGS__);
 #define LOGE(FORMAT,...) __android_log_print(ANDROID_LOG_ERROR,"hechuangwu",FORMAT,##__VA_ARGS__);
 #define LOGI(FORMAT,...) __android_log_print(ANDROID_LOG_INFO,"hechuangwu",FORMAT,##__VA_ARGS__);
 #define LOGW(FORMAT,...) __android_log_print(ANDROID_LOG_WARN,"hechuangwu",FORMAT,##__VA_ARGS__);

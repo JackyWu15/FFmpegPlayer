@@ -3,17 +3,17 @@
 // Created by Administrator on 2019/2/20.
 //
 
-#include "FfQueue.h"
-FfQueue::FfQueue() {
+#include "ffqueue.h"
+FFQueue::FFQueue() {
     pthread_mutex_init(&queueMutex,NULL);
     pthread_cond_init(&queueCond,NULL);
 }
 
-FfQueue::~FfQueue() {
+FFQueue::~FFQueue() {
 
 }
 
-void FfQueue::pushAVPacket(AVPacket *avPacket) {
+void FFQueue::pushAVPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&queueMutex);
     avPacketQueue.push(avPacket);
     if(LOGDEBUG){
@@ -23,7 +23,7 @@ void FfQueue::pushAVPacket(AVPacket *avPacket) {
     pthread_mutex_unlock(&queueMutex);
 }
 
-int FfQueue::popAVPacket(AVPacket *avPacket) {
+int FFQueue::popAVPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&queueMutex);
 
     if(this->ffPlayStatus==1){
@@ -50,12 +50,12 @@ int FfQueue::popAVPacket(AVPacket *avPacket) {
     return 0;
 }
 
-void FfQueue::setFfPlayStatus(int ffPlayStatus) {
+void FFQueue::setFfPlayStatus(int ffPlayStatus) {
     this->ffPlayStatus = ffPlayStatus;
 
 }
 
-int FfQueue::getQueueSize() {
+int FFQueue::getQueueSize() {
     pthread_mutex_lock(&queueMutex);
     int queueSize = this->avPacketQueue.size();
     pthread_mutex_unlock(&queueMutex);

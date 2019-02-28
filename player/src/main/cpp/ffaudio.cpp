@@ -2,20 +2,20 @@
 // Created by Administrator on 2019/2/18.
 //
 
-#include "FfAudio.h"
+#include "ffaudio.h"
 
 
 
 
 
 
-FfAudio::FfAudio() {
-    this->ffQueue = new FfQueue();
+FFAudio::FFAudio() {
+    this->ffQueue = new FFQueue();
     this->ffPlayStatus = STATUS_PLAYING;
     this->outBuffer = (uint8_t*)av_malloc(BITRATE);
 }
 
-FfAudio::~FfAudio() {
+FFAudio::~FFAudio() {
     if(this->outBuffer!=NULL){
         free(this->outBuffer);
         this->outBuffer = NULL;
@@ -23,19 +23,19 @@ FfAudio::~FfAudio() {
 }
 
 void *openSLESCallBack(void *data) {
-    FfAudio *audio = (FfAudio *) data;
+    FFAudio *audio = (FFAudio *) data;
     audio->createOpenSLES();
     pthread_exit(&audio->pthreadPlay);
 }
 
-void FfAudio::play() {
+void FFAudio::play() {
     pthread_create(&pthreadPlay, NULL, openSLESCallBack, this);
 }
 
 
 //读取pcm数据放入缓冲队列中，提供播放器进行读取
 void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext){
-    FfAudio *audio = (FfAudio*)pContext;
+    FFAudio *audio = (FFAudio*)pContext;
     if(audio!=NULL){
         int dataSize = audio->resample();
         if(dataSize>0){
@@ -45,7 +45,7 @@ void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext){
 
 }
 
-void FfAudio::createOpenSLES() {
+void FFAudio::createOpenSLES() {
     //创建引擎对象
     slCreateEngine(&slengineObject,0,0,0,0,0);
     //初始化引擎
@@ -110,7 +110,7 @@ void FfAudio::createOpenSLES() {
 }
 
 
-int FfAudio::resample() {
+int FFAudio::resample() {
     while (this->ffPlayStatus == STATUS_PLAYING) {
         this->avPacket = av_packet_alloc();
         if (this->ffQueue->popAVPacket(this->avPacket) == 0) {

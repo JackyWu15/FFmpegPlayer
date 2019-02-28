@@ -6,12 +6,12 @@
 #define FFMPEGPLAYER_FFCALLBCAK_H
 
 #include "jni.h"
-#include "AndroidLog.h"
+#include "androidlog.h"
 
 #define CALL_MAIN (0)
 #define CALL_CHILD (1)
 
-class FfCallBack {
+class FFCallBack {
 public:
     JavaVM *javaVM;
     JNIEnv *jniEnv;
@@ -19,8 +19,8 @@ public:
 
     jmethodID jmethod_prepare;
 public:
-    FfCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
-    ~FfCallBack();
+    FFCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
+    ~FFCallBack();
 
 public:
     void onPrepareCallBack(int type);

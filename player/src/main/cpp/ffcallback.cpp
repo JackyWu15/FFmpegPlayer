@@ -2,9 +2,9 @@
 // Created by Administrator on 2019/2/18.
 //
 
-#include "FfCallBcak.h"
+#include "ffcallback.h"
 
-FfCallBack::FfCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
+FFCallBack::FFCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
     this->javaVM = javaVM;
     this->jniEnv = jniEnv;
     this->jobj = jobj;
@@ -18,7 +18,7 @@ FfCallBack::FfCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
     this->jmethod_prepare = jniEnv->GetMethodID(jcls,"onPrepareCallBack","()V");
 }
 
-void FfCallBack::onPrepareCallBack(int type) {
+void FFCallBack::onPrepareCallBack(int type) {
     if(type==CALL_MAIN){
         this->jniEnv->CallVoidMethod(this->jobj,this->jmethod_prepare);
     } else if(type==CALL_CHILD){
