@@ -48,9 +48,11 @@ void FFmpeg::decodeAudio() {
     for (int i = 0; i < avFormatContext->nb_streams; i++) {
         if (avFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
             if (ffAudio == NULL) {
-                ffAudio = new FFAudio(this->ffCallBack);
-                ffAudio->streamIndex = i;
-                ffAudio->codecpar = avFormatContext->streams[i]->codecpar;
+                this->ffAudio = new FFAudio(this->ffCallBack);
+                this->ffAudio->streamIndex = i;
+                this->ffAudio->codecpar = avFormatContext->streams[i]->codecpar;
+                this->ffAudio->allDuration = avFormatContext->duration/AV_TIME_BASE;
+                this->ffAudio->avRational = avFormatContext->streams[i]->time_base;
             }
         }
     }

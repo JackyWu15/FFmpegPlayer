@@ -1,6 +1,6 @@
 #include <string>
+#include <iostream>
 #include "ffmpeg.h"
-
 using namespace std;
 
 JavaVM *javaVM;
@@ -27,6 +27,7 @@ JNIEXPORT void JNICALL
 Java_com_hechuangwu_player_ffplayer_FFPlayer__1prepare(JNIEnv *env, jobject instance,
                                                        jstring filePath_) {
     const char *filePath = env->GetStringUTFChars(filePath_, 0);
+    LOGI("env is %s",env);
     if (ffmpeg == NULL) {
         if (ffCallBack == NULL) {
             //对象不能跨线程使用，需生成全局变量
@@ -53,7 +54,7 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1start(JNIEnv *env, jobject instan
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_hechuangwu_player_ffplayer_FFPlayer__1pause(JNIEnv *env, jobject instance) {
-
+    LOGI("pause env is %s",env);
     if(ffmpeg!=NULL){
         ffmpeg->pause();
     }

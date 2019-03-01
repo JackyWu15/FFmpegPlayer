@@ -59,6 +59,17 @@ public:
     SLVolumeItf slVolumeItf = NULL;
     //输入播放器队列
     SLAndroidSimpleBufferQueueItf  slAndroidSimpleBufferQueueItf =NULL;
+    //avframe时间单位
+    AVRational avRational;
+    //总时间(秒)
+    int allDuration;
+    //frame的当前时间
+    int frameDuration;
+    //当前时间
+    int currentTime;
+    //时间间隔
+    int newTime;
+
 public:
     FFAudio(FFCallBack* ffCallBack);
     ~FFAudio();

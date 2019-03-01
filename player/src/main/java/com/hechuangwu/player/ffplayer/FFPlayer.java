@@ -36,6 +36,11 @@ public class FFPlayer {
             this.onPlayerListener.OnPrepare();
         }
     }
+    public void onProgressCallBack(int currentTime,int totalTime){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.onProgress( currentTime,totalTime );
+        }
+    }
     public void prepare(){
         if(!TextUtils.isEmpty( filePath )){
             new Thread( new Runnable() {

@@ -8,4 +8,5 @@ public interface OnPlayerListener {
     void OnLoad(boolean type);
     void OnPrepare();
     void OnPause(boolean type);
+    void onProgress(int currentTime,int totalTime);
 }

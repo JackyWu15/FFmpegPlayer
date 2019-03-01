@@ -35,6 +35,11 @@ void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) 
     FFAudio *audio = (FFAudio *) pContext;
     if (audio != NULL) {
         int dataSize = audio->resample();
+        audio->currentTime += dataSize / BITRATE;
+        if(audio->currentTime-audio->newTime>0.1){
+            audio->newTime = audio->currentTime;
+            audio->ffCallBack->onProgressCallBack(CALL_CHILD,audio->currentTime,audio->allDuration);
+        }
         if (dataSize > 0) {
             (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,
                                                              audio->outBuffer, dataSize);
@@ -179,11 +184,17 @@ int FFAudio::resample() {
                         this->avFrame->nb_samples//输入采样个数
                 );
                 int outChannels = av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO);
-                this->dataSize =
-                        resample * outChannels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+                this->dataSize = resample * outChannels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
                 if (LOGDEBUG) {
                     LOGI("data size is %d", this->dataSize);
                 }
+                this->frameDuration = avFrame->pts*av_q2d(this->avRational);
+                if(this->frameDuration>this->currentTime){
+                    this->currentTime = this->frameDuration;
+                } else{
+                    this->frameDuration = this->currentTime;
+                }
+
                 av_packet_free(&this->avPacket);
                 av_free(avPacket);
                 this->avPacket = NULL;
@@ -216,12 +227,14 @@ int FFAudio::resample() {
 void FFAudio::pause() {
     if (this->slPlayItf != NULL) {
         (*this->slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PAUSED);
+        this->ffCallBack->onPauseCallBack(CALL_MAIN,true);
     }
 }
 
 void FFAudio::play() {
     if(this->slPlayItf!=NULL){
         (*this->slPlayItf)->SetPlayState(slPlayItf,SL_PLAYSTATE_PLAYING);
+        this->ffCallBack->onPauseCallBack(CALL_MAIN,false);
     }
 }
 

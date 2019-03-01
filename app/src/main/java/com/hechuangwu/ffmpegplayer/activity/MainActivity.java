@@ -1,4 +1,4 @@
-package com.hechuangwu.ffmpegplayer;
+package com.hechuangwu.ffmpegplayer.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,7 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.hechuangwu.ffmpegplayer.R;
+import com.hechuangwu.ffmpegplayer.utls.TimeUtils;
 import com.hechuangwu.player.ffplayer.FFPlayer;
 import com.hechuangwu.player.listener.OnPlayerListener;
 
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String mFilePath;
     private Button mBtStart;
     private Button mBtPause;
+    private TextView mTvCurrentTime;
+    private TextView mTvTotalTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtStart = findViewById( R.id.bt_start );
         mBtPause = findViewById( R.id.bt_pause );
         mBtPlay = findViewById( R.id.bt_play );
+        mTvCurrentTime = findViewById( R.id.tv_currentTime );
+        mTvTotalTime = findViewById( R.id.tv_totalTime );
     }
     private void initEvent() {
         mBtStart.setOnClickListener( this );
@@ -66,6 +73,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else {
                     Log.i( "data", "OnPause: >>>>播放" );
                 }
+            }
+
+            @Override
+            public void onProgress(final int currentTime, final int totalTime) {
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        mTvCurrentTime.setText( TimeUtils.secdsToDateFormat( currentTime,totalTime )+"/" );
+                        mTvTotalTime.setText( TimeUtils.secdsToDateFormat( totalTime,totalTime ) );
+                    }
+                } );
             }
         } );
     }
