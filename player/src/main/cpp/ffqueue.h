@@ -8,7 +8,10 @@
 #include "pthread.h"
 #include "unistd.h"
 #include "androidlog.h"
+#define STATUS_PLAYING (1)
 using namespace std;
+
+
 extern "C"{
 #include "libavcodec/avcodec.h"
 };
@@ -28,7 +31,7 @@ public:
     void pushAVPacket(AVPacket* avPacket);
     int popAVPacket(AVPacket* avPacket);
     int getQueueSize();
-
+    void releaseAVPacket();
 };
 
 

@@ -10,7 +10,7 @@ FFQueue::FFQueue() {
 }
 
 FFQueue::~FFQueue() {
-
+    releaseAVPacket();
 }
 
 void FFQueue::pushAVPacket(AVPacket *avPacket) {
@@ -26,7 +26,7 @@ void FFQueue::pushAVPacket(AVPacket *avPacket) {
 int FFQueue::popAVPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&queueMutex);
 
-    if(this->ffPlayStatus==1){
+    if(this->ffPlayStatus==STATUS_PLAYING){
         while (true){
             if(avPacketQueue.size()>0){
                 AVPacket * pPacket = avPacketQueue.front();
@@ -60,6 +60,20 @@ int FFQueue::getQueueSize() {
     int queueSize = this->avPacketQueue.size();
     pthread_mutex_unlock(&queueMutex);
     return queueSize;
+}
+
+void FFQueue::releaseAVPacket() {
+    pthread_cond_signal(&queueCond);
+    pthread_mutex_unlock(&queueMutex);
+    while (this->avPacketQueue.size()>0){
+        AVPacket *pPacket = this->avPacketQueue.front();
+        this->avPacketQueue.pop();
+        av_packet_free(&pPacket);
+        av_free(pPacket);
+        pPacket = NULL;
+    }
+    pthread_mutex_unlock(&queueMutex);
+
 }
 
 

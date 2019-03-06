@@ -10,6 +10,7 @@
 #include "ffaudio.h"
 extern "C"{
 #include "libavformat/avformat.h"
+#include "libavutil/time.h"
 };
 
 class FFmpeg {
@@ -19,6 +20,8 @@ public:
     pthread_t decodeThread;
     AVFormatContext* avFormatContext = NULL;
     FFAudio* ffAudio = NULL;
+    pthread_mutex_t playMutex;
+    int ffPlayStatus ;
 
 public:
     FFmpeg(FFCallBack *ffCallBack, const char* filePath);
@@ -30,6 +33,7 @@ public:
     void start();//启动
     void pause();//暂停
     void play();//播放
+    void release();
 };
 
 

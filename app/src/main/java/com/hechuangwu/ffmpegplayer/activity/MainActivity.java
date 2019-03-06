@@ -1,6 +1,7 @@
 package com.hechuangwu.ffmpegplayer.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,7 +9,6 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,18 +21,19 @@ import com.hechuangwu.player.listener.OnPlayerListener;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
 
 
+    private final static int PERMISSION_CODE = 1;
     private FFPlayer mFFmpegPlayer;
     private Button mBtPlay;
-    private final static int PERMISSION_CODE = 1;
     private String mFilePath;
-    private Button mBtStart;
     private Button mBtPause;
     private TextView mTvCurrentTime;
     private TextView mTvTotalTime;
-
+    private Button mBtStop;
+    private boolean isStop = true;
+    private boolean isPause;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -42,16 +43,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void initView() {
         setContentView( R.layout.activity_main );
-        mBtStart = findViewById( R.id.bt_start );
         mBtPause = findViewById( R.id.bt_pause );
         mBtPlay = findViewById( R.id.bt_play );
+        mBtStop = findViewById( R.id.bt_stop );
         mTvCurrentTime = findViewById( R.id.tv_currentTime );
         mTvTotalTime = findViewById( R.id.tv_totalTime );
     }
     private void initEvent() {
-        mBtStart.setOnClickListener( this );
         mBtPause.setOnClickListener( this );
         mBtPlay.setOnClickListener( this );
+        mBtStop.setOnClickListener( this );
         mFFmpegPlayer.setOnPlayerListener( new OnPlayerListener() {
             @Override
             public void OnLoad(boolean type) {
@@ -64,15 +65,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void OnPrepare() {
                 mFFmpegPlayer.start();
+                isStop = false;
             }
 
             @Override
             public void OnPause(boolean type) {
-                if(type){
-                    Log.i( "data", "OnPause: >>>>暂停中" );
-                }else {
-                    Log.i( "data", "OnPause: >>>>播放" );
-                }
+                isPause = type;
             }
 
             @Override
@@ -96,22 +94,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.bt_start:
-                if (ContextCompat.checkSelfPermission( this, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED) {
-                    String [] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    ActivityCompat.requestPermissions( this, permission, PERMISSION_CODE );
-                }else {
-                    mFFmpegPlayer.setFilePath( mFilePath );
-                    mFFmpegPlayer.prepare();
+            case R.id.bt_play:
+                if(isStop){
+                    if (ContextCompat.checkSelfPermission( this, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED) {
+                        String [] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        ActivityCompat.requestPermissions( this, permission, PERMISSION_CODE );
+                    }else {
+                        mFFmpegPlayer.setFilePath( mFilePath );
+                        mFFmpegPlayer.prepare();
+                    }
+                }else if(isPause){
+                        mFFmpegPlayer.play();
                 }
                 break;
             case R.id.bt_pause:
                 mFFmpegPlayer.pause();
                 break;
-            case R.id.bt_play:
-                mFFmpegPlayer.play();
+            case R.id.bt_stop:
+                mFFmpegPlayer.stop();
+                isStop = true;
                 break;
-
         }
     }
 

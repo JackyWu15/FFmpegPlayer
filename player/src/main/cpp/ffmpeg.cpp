@@ -7,10 +7,12 @@
 FFmpeg::FFmpeg(FFCallBack *ffCallBack, const char *filePath) {
     this->ffCallBack = ffCallBack;
     this->filePath = filePath;
+    pthread_mutex_init(&playMutex,NULL);
+    this->ffPlayStatus = STATUS_STOP;
 }
 
 FFmpeg::~FFmpeg() {
-
+    pthread_mutex_destroy(&playMutex);
 }
 void *decodeCallBack(void *data) {
     FFmpeg *ffmpeg = (FFmpeg *) data;
@@ -21,7 +23,9 @@ void FFmpeg::prepare() {
     pthread_create(&decodeThread, NULL, decodeCallBack, this);
 }
 
+
 void FFmpeg::decodeAudio() {
+    pthread_mutex_lock(&playMutex);
     //注册所有解码器
     av_register_all();
     //初始化网络连接组件
@@ -32,16 +36,18 @@ void FFmpeg::decodeAudio() {
     if (avformat_open_input(&avFormatContext, filePath, NULL, NULL) != 0) {
         if (LOGDEBUG) {
             LOGW("open filePath is failed, filePath is %s", filePath);
-            return;
         }
+        pthread_mutex_unlock(&playMutex);
+        return;
     }
 
     //找到流媒体成功返回大于等于0
     if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
         if (LOGDEBUG) {
             LOGW("open stream is failed, filePath is %s", filePath)
-            return;
         }
+        pthread_mutex_unlock(&playMutex);
+        return;
     }
 
     //从流媒体中找音频流并进行存储
@@ -50,28 +56,30 @@ void FFmpeg::decodeAudio() {
             if (ffAudio == NULL) {
                 this->ffAudio = new FFAudio(this->ffCallBack);
                 this->ffAudio->streamIndex = i;
-                this->ffAudio->codecpar = avFormatContext->streams[i]->codecpar;
+                this->ffAudio->avCodecpar = avFormatContext->streams[i]->codecpar;
                 this->ffAudio->allDuration = avFormatContext->duration/AV_TIME_BASE;
                 this->ffAudio->avRational = avFormatContext->streams[i]->time_base;
             }
         }
     }
     //根据流属性id找到解码器
-    AVCodec *pCodec = avcodec_find_decoder(ffAudio->codecpar->codec_id);
+    AVCodec *pCodec = avcodec_find_decoder(ffAudio->avCodecpar->codec_id);
     if (!pCodec) {
         if (LOGDEBUG) {
-            LOGW("can not find decoder!")
+            LOGW("can not find decoder!");
         }
+        pthread_mutex_unlock(&playMutex);
         return;
     }
     //通过解码器创建解码器上下文
     this->ffAudio->avCodecContext = avcodec_alloc_context3(pCodec);
 
     //将解码器中的属性复制到解码器上下文中
-    if (avcodec_parameters_to_context(this->ffAudio->avCodecContext, this->ffAudio->codecpar) < 0) {
+    if (avcodec_parameters_to_context(this->ffAudio->avCodecContext, this->ffAudio->avCodecpar) < 0) {
         if (LOGDEBUG) {
             LOGW("can not fill the avCodec to avCodecContext!")
         }
+        pthread_mutex_unlock(&playMutex);
         return;
     }
 
@@ -80,12 +88,21 @@ void FFmpeg::decodeAudio() {
         if (LOGDEBUG) {
             LOGW("can not open avCodec!")
         }
+        pthread_mutex_unlock(&playMutex);
         return;
     }
 
     //prepare成功，通知java层
-    this->ffCallBack->onPrepareCallBack(CALL_CHILD);
-
+    if(this->ffCallBack!=NULL){
+        this->ffPlayStatus = STATUS_PLAYING;
+        this->ffCallBack->onPrepareCallBack(CALL_CHILD);
+    } else{
+        this->ffPlayStatus = STATUS_STOP;
+    }
+    if(ffAudio!=NULL){
+        this->ffAudio->ffPlayStatus = this->ffPlayStatus;
+    }
+    pthread_mutex_unlock(&playMutex);
 }
 
 //从流中解码出每一帧
@@ -149,5 +166,28 @@ void FFmpeg::play() {
         this->ffAudio->play();
     }
 }
+
+void FFmpeg::release() {
+    if(this->ffPlayStatus==STATUS_STOP){
+        return;
+    } else{
+        pthread_mutex_lock(&playMutex);
+        this->ffAudio->ffPlayStatus = STATUS_STOP;
+        if(this->ffAudio!=NULL){
+            this->ffAudio->release();
+            delete(this->ffAudio);
+            this->ffAudio = NULL;
+        }
+        if(this->avFormatContext!=NULL){
+            avformat_close_input(&avFormatContext);
+            avformat_free_context(avFormatContext);
+            this->avFormatContext = NULL;
+        }
+        pthread_mutex_unlock(&playMutex);
+    }
+
+
+}
+
 
 

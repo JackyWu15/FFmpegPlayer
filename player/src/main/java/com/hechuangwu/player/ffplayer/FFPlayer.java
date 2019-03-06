@@ -93,8 +93,18 @@ public class FFPlayer {
         _play();
     }
 
+    public void stop(){
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                _stop();
+            }
+        } ).start();
+
+    }
     private native void _prepare(String filePath);
     private native void _start();
     private native void _pause();
     private native void _play() ;
+    private native void _stop();
 }

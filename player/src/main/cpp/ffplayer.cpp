@@ -27,7 +27,6 @@ JNIEXPORT void JNICALL
 Java_com_hechuangwu_player_ffplayer_FFPlayer__1prepare(JNIEnv *env, jobject instance,
                                                        jstring filePath_) {
     const char *filePath = env->GetStringUTFChars(filePath_, 0);
-    LOGI("env is %s",env);
     if (ffmpeg == NULL) {
         if (ffCallBack == NULL) {
             //对象不能跨线程使用，需生成全局变量
@@ -54,7 +53,6 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1start(JNIEnv *env, jobject instan
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_hechuangwu_player_ffplayer_FFPlayer__1pause(JNIEnv *env, jobject instance) {
-    LOGI("pause env is %s",env);
     if(ffmpeg!=NULL){
         ffmpeg->pause();
     }
@@ -66,5 +64,22 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1play(JNIEnv *env, jobject instanc
     if(ffmpeg!=NULL){
         ffmpeg->play();
     }
+
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1stop(JNIEnv *env, jobject instance) {
+
+    if(ffmpeg!=NULL){
+        ffmpeg->release();
+        delete (ffmpeg);
+        ffmpeg = NULL;
+    }
+    if(ffCallBack!=NULL){
+        delete(ffCallBack);
+        ffCallBack = NULL;
+    }
+
 
 }

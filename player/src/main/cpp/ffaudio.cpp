@@ -8,15 +8,12 @@
 FFAudio::FFAudio(FFCallBack *ffCallBack) {
     this->ffCallBack = ffCallBack;
     this->ffQueue = new FFQueue();
-    this->ffPlayStatus = STATUS_PLAYING;
+    this->ffPlayStatus = STATUS_INIT;
     this->outBuffer = (uint8_t *) av_malloc(BITRATE);
 }
 
 FFAudio::~FFAudio() {
-    if (this->outBuffer != NULL) {
-        free(this->outBuffer);
-        this->outBuffer = NULL;
-    }
+
 }
 
 void *openSLESCallBack(void *data) {
@@ -36,6 +33,7 @@ void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) 
     if (audio != NULL) {
         int dataSize = audio->resample();
         audio->currentTime += dataSize / BITRATE;
+        LOGI("current time %d,new time %d",audio->currentTime,audio->newTime);
         if(audio->currentTime-audio->newTime>0.1){
             audio->newTime = audio->currentTime;
             audio->ffCallBack->onProgressCallBack(CALL_CHILD,audio->currentTime,audio->allDuration);
@@ -50,11 +48,11 @@ void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) 
 
 void FFAudio::createOpenSLES() {
     //创建引擎对象
-    slCreateEngine(&slengineObject, 0, 0, 0, 0, 0);
+    slCreateEngine(&slEngineObject, 0, 0, 0, 0, 0);
     //初始化引擎
-    (*slengineObject)->Realize(slengineObject, SL_BOOLEAN_FALSE);
+    (*slEngineObject)->Realize(slEngineObject, SL_BOOLEAN_FALSE);
     //获取引擎接口
-    (*slengineObject)->GetInterface(slengineObject, SL_IID_ENGINE, &slEngineItf);
+    (*slEngineObject)->GetInterface(slEngineObject, SL_IID_ENGINE, &slEngineItf);
 
     //通过引擎接口创建混音器对象
     const SLInterfaceID slids[1] = {SL_IID_ENVIRONMENTALREVERB};
@@ -237,6 +235,46 @@ void FFAudio::play() {
         this->ffCallBack->onPauseCallBack(CALL_MAIN,false);
     }
 }
+
+void FFAudio::release() {
+    if(ffQueue!=NULL){
+        delete(ffQueue);
+       ffQueue = NULL;
+    }
+
+    if(slPCMPlayerObject!=NULL){
+        (*slPCMPlayerObject)->Destroy(slPCMPlayerObject);
+        slPCMPlayerObject = NULL;
+        slPlayItf = NULL;
+        slAndroidSimpleBufferQueueItf = NULL;
+        slVolumeItf = NULL;
+    }
+
+    if(slOutputMixObject!=NULL){
+        (*slOutputMixObject)->Destroy(slOutputMixObject);
+        slOutputMixObject = NULL;
+        slEnvironmentalReverbItf = NULL;
+    }
+
+    if(slEngineObject!=NULL){
+        (*slEngineObject)->Destroy(slEngineObject);
+        slEngineObject = NULL;
+        slEngineItf = NULL;
+    }
+
+    if(avCodecContext!=NULL){
+        avcodec_close(avCodecContext);
+        avcodec_free_context(&avCodecContext);
+        avCodecContext = NULL;
+    }
+
+    if (outBuffer != NULL) {
+        free(outBuffer);
+        outBuffer = NULL;
+    }
+
+}
+
 
 
 

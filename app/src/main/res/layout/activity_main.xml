@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
-
     <Button
-        android:id="@+id/bt_start"
+        android:id="@+id/bt_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始"
+        android:text="播放"
         />
     <Button
         android:id="@+id/bt_pause"
@@ -19,11 +18,12 @@
         android:layout_height="wrap_content"
         android:text="暂停"
         />
+
     <Button
-        android:id="@+id/bt_play"
+        android:id="@+id/bt_stop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="播放"
+        android:text="停止"
         />
     <LinearLayout
         android:layout_width="wrap_content"

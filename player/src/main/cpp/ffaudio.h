@@ -7,9 +7,10 @@
 
 #include "ffqueue.h"
 #include "ffcallback.h"
-#define STATUS_LOADING 0
-#define STATUS_PLAYING 1
-#define STATUS_STOP 2;
+#define STATUS_INIT (-1)
+#define STATUS_LOADING (0)
+#define STATUS_PLAYING (1)
+#define STATUS_STOP (2)
 #define BITRATE 48000*2*2
 
 extern "C"{
@@ -26,7 +27,7 @@ public:
     //音频流角标
     int streamIndex;
     //音频流属性
-    AVCodecParameters* codecpar = NULL;
+    AVCodecParameters* avCodecpar = NULL;
     //播放状态
     int ffPlayStatus;
     //播放回调
@@ -45,7 +46,7 @@ public:
     int dataSize;
     SLresult slResult ;
     //引擎类和接口
-    SLObjectItf slengineObject = NULL;
+    SLObjectItf slEngineObject = NULL;
     SLEngineItf slEngineItf = NULL;
     //混音器
     SLObjectItf slOutputMixObject = NULL;
@@ -79,8 +80,7 @@ public:
     int resample();
     void pause();
     void play();
-
-
+    void release();
 
 };
 
