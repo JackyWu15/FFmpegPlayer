@@ -25,7 +25,6 @@ void FFQueue::pushAVPacket(AVPacket *avPacket) {
 
 int FFQueue::popAVPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&queueMutex);
-
     if(this->ffPlayStatus==STATUS_PLAYING){
         while (true){
             if(avPacketQueue.size()>0){

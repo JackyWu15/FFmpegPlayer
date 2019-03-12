@@ -22,6 +22,7 @@ public:
     FFAudio* ffAudio = NULL;
     pthread_mutex_t playMutex;
     int ffPlayStatus ;
+    pthread_mutex_t seekMutex;
 
 public:
     FFmpeg(FFCallBack *ffCallBack, const char* filePath);
@@ -34,6 +35,7 @@ public:
     void pause();//暂停
     void play();//播放
     void release();
+    void seek(int64_t seconds);
 };
 
 

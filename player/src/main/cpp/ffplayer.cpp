@@ -6,7 +6,7 @@ using namespace std;
 JavaVM *javaVM;
 FFCallBack *ffCallBack;
 FFmpeg *ffmpeg;
-
+pthread_t playerStart;
 /**
  * 获取JavaVM
  * 必须返回版本号
@@ -32,20 +32,25 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1prepare(JNIEnv *env, jobject inst
             //对象不能跨线程使用，需生成全局变量
             ffCallBack = new FFCallBack(javaVM, env, env->NewGlobalRef(instance));
         }
-
         ffmpeg = new FFmpeg(ffCallBack, filePath);
         ffmpeg->prepare();
     }
-
-
     env->ReleaseStringUTFChars(filePath_, filePath);
+}
+
+void* startCallBack(void* data){
+    FFmpeg *ffmpeg = (FFmpeg*)data;
+    ffmpeg->start();
+    pthread_exit(&playerStart);
+    
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_hechuangwu_player_ffplayer_FFPlayer__1start(JNIEnv *env, jobject instance) {
     if(ffmpeg!=NULL){
-        ffmpeg->start();
+        pthread_create(&playerStart,NULL,startCallBack,ffmpeg);
+//        ffmpeg->start();
     }
 
 }
@@ -82,4 +87,13 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1stop(JNIEnv *env, jobject instanc
     }
 
 
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1seek(JNIEnv *env, jobject instance, jint seconds) {
+
+    if(ffmpeg!=NULL){
+        ffmpeg->seek(seconds);
+    }
 }

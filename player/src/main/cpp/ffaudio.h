@@ -11,6 +11,7 @@
 #define STATUS_LOADING (0)
 #define STATUS_PLAYING (1)
 #define STATUS_STOP (2)
+#define STATUS_SEEK (3)
 #define BITRATE 48000*2*2
 
 extern "C"{

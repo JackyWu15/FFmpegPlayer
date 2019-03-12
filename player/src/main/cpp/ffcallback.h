@@ -21,6 +21,8 @@ public:
     jmethodID jmethod_load;
     jmethodID jmethod_progress;
     jmethodID jmethod_pause;
+    jmethodID jmethod_error;
+    jmethodID jmethod_complete;
 public:
     FFCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
     ~FFCallBack();
@@ -30,6 +32,8 @@ public:
     void onLoadCallBack(int type,bool status);
     void onPauseCallBack(int type,bool status);
     void onProgressCallBack(int type,int currentTime,int totalTime);
+    void onErrorCallBack(int type,int code,char* msg);
+    void onCompleteCallBack(int type);
 };
 
 

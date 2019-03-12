@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hechuangwu.ffmpegplayer.R;
@@ -34,6 +35,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button mBtStop;
     private boolean isStop = true;
     private boolean isPause;
+    private SeekBar mSbCurrent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -46,6 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtPause = findViewById( R.id.bt_pause );
         mBtPlay = findViewById( R.id.bt_play );
         mBtStop = findViewById( R.id.bt_stop );
+        mSbCurrent = findViewById( R.id.sb_current );
         mTvCurrentTime = findViewById( R.id.tv_currentTime );
         mTvTotalTime = findViewById( R.id.tv_totalTime );
     }
@@ -53,6 +57,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBtPause.setOnClickListener( this );
         mBtPlay.setOnClickListener( this );
         mBtStop.setOnClickListener( this );
+        mSbCurrent.setMax( 95 );
+        mSbCurrent.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mFFmpegPlayer.seek( seekBar.getProgress() );
+            }
+        } );
         mFFmpegPlayer.setOnPlayerListener( new OnPlayerListener() {
             @Override
             public void OnLoad(boolean type) {
@@ -72,7 +91,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void OnPause(boolean type) {
                 isPause = type;
             }
-
+            @Override
+            public void onError(int type, String msg) {
+                Log.i( "data", "onError: "+type+">>>>"+msg );
+            }
+            @Override
+            public void onComplete() {
+                Log.i( "data", "onComplete: >>>>>>>>>播放完成" );
+            }
             @Override
             public void onProgress(final int currentTime, final int totalTime) {
                 runOnUiThread( new Runnable() {

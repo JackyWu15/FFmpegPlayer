@@ -7,18 +7,21 @@
 FFmpeg::FFmpeg(FFCallBack *ffCallBack, const char *filePath) {
     this->ffCallBack = ffCallBack;
     this->filePath = filePath;
-    pthread_mutex_init(&playMutex,NULL);
+    pthread_mutex_init(&playMutex, NULL);
+    pthread_mutex_init(&seekMutex, NULL);
     this->ffPlayStatus = STATUS_STOP;
 }
 
 FFmpeg::~FFmpeg() {
     pthread_mutex_destroy(&playMutex);
 }
+
 void *decodeCallBack(void *data) {
     FFmpeg *ffmpeg = (FFmpeg *) data;
     ffmpeg->decodeAudio();
     pthread_exit(&ffmpeg->decodeThread);
 }
+
 void FFmpeg::prepare() {
     pthread_create(&decodeThread, NULL, decodeCallBack, this);
 }
@@ -34,18 +37,14 @@ void FFmpeg::decodeAudio() {
     avFormatContext = avformat_alloc_context();
     //打开地址成功返回0
     if (avformat_open_input(&avFormatContext, filePath, NULL, NULL) != 0) {
-        if (LOGDEBUG) {
-            LOGW("open filePath is failed, filePath is %s", filePath);
-        }
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1001, "open file failed");
         pthread_mutex_unlock(&playMutex);
         return;
     }
 
     //找到流媒体成功返回大于等于0
     if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
-        if (LOGDEBUG) {
-            LOGW("open stream is failed, filePath is %s", filePath)
-        }
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1002, "open stream failed");
         pthread_mutex_unlock(&playMutex);
         return;
     }
@@ -57,7 +56,7 @@ void FFmpeg::decodeAudio() {
                 this->ffAudio = new FFAudio(this->ffCallBack);
                 this->ffAudio->streamIndex = i;
                 this->ffAudio->avCodecpar = avFormatContext->streams[i]->codecpar;
-                this->ffAudio->allDuration = avFormatContext->duration/AV_TIME_BASE;
+                this->ffAudio->allDuration = avFormatContext->duration / AV_TIME_BASE;
                 this->ffAudio->avRational = avFormatContext->streams[i]->time_base;
             }
         }
@@ -65,9 +64,7 @@ void FFmpeg::decodeAudio() {
     //根据流属性id找到解码器
     AVCodec *pCodec = avcodec_find_decoder(ffAudio->avCodecpar->codec_id);
     if (!pCodec) {
-        if (LOGDEBUG) {
-            LOGW("can not find decoder!");
-        }
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1003, "can not find decoder");
         pthread_mutex_unlock(&playMutex);
         return;
     }
@@ -75,31 +72,29 @@ void FFmpeg::decodeAudio() {
     this->ffAudio->avCodecContext = avcodec_alloc_context3(pCodec);
 
     //将解码器中的属性复制到解码器上下文中
-    if (avcodec_parameters_to_context(this->ffAudio->avCodecContext, this->ffAudio->avCodecpar) < 0) {
-        if (LOGDEBUG) {
-            LOGW("can not fill the avCodec to avCodecContext!")
-        }
+    if (avcodec_parameters_to_context(this->ffAudio->avCodecContext, this->ffAudio->avCodecpar) <
+        0) {
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1004,
+                                          "can not fill the avCodec to avCodecContext");
         pthread_mutex_unlock(&playMutex);
         return;
     }
 
     //打开解码器
     if (avcodec_open2(this->ffAudio->avCodecContext, pCodec, 0) < 0) {
-        if (LOGDEBUG) {
-            LOGW("can not open avCodec!")
-        }
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1005, "can not open avCodec!");
         pthread_mutex_unlock(&playMutex);
         return;
     }
 
     //prepare成功，通知java层
-    if(this->ffCallBack!=NULL){
+    if (this->ffCallBack != NULL) {
         this->ffPlayStatus = STATUS_PLAYING;
         this->ffCallBack->onPrepareCallBack(CALL_CHILD);
-    } else{
+    } else {
         this->ffPlayStatus = STATUS_STOP;
     }
-    if(ffAudio!=NULL){
+    if (ffAudio != NULL) {
         this->ffAudio->ffPlayStatus = this->ffPlayStatus;
     }
     pthread_mutex_unlock(&playMutex);
@@ -108,9 +103,7 @@ void FFmpeg::decodeAudio() {
 //从流中解码出每一帧
 void FFmpeg::start() {
     if (this->ffAudio == NULL) {
-        if (LOGDEBUG) {
-            LOGE("audio is null!");
-        }
+        this->ffCallBack->onErrorCallBack(CALL_CHILD, 1006, "audio is null");
         return;
     }
     //开启线程，解码AVPacket并重采样生成PCM数据
@@ -118,67 +111,73 @@ void FFmpeg::start() {
 
     //保存AVPacket到队列中
     int count = 0;
-    while (this->ffAudio->ffPlayStatus == STATUS_PLAYING) {
+    while (this->ffAudio->ffPlayStatus != STATUS_STOP) {
+        if (this->ffAudio->ffPlayStatus == STATUS_SEEK ||
+            this->ffAudio->ffQueue->getQueueSize() > 40) {
+            continue;
+        }
         AVPacket *pPacket = av_packet_alloc();
-        if (av_read_frame(this->avFormatContext, pPacket) == 0) {
+        pthread_mutex_lock(&seekMutex);
+        int ret = av_read_frame(this->avFormatContext, pPacket);
+        pthread_mutex_unlock(&seekMutex);
+        if (ret == 0) {
             if (pPacket->stream_index == this->ffAudio->streamIndex) {
                 count++;
                 if (LOGDEBUG) {
-                LOGI("解码到第 %d 帧", count);
+                    LOGI("解码到第 %d 帧", count);
                 }
                 this->ffAudio->ffQueue->setFfPlayStatus(this->ffAudio->ffPlayStatus);
                 this->ffAudio->ffQueue->pushAVPacket(pPacket);
-            } else{
+            } else {
                 av_packet_free(&pPacket);
                 av_free(pPacket);
                 pPacket = NULL;
             }
-        } else{
+        } else {
             av_packet_free(&pPacket);
             av_free(pPacket);
             pPacket = NULL;
             //出队完成退出循环
-            while (this->ffAudio->ffPlayStatus==STATUS_PLAYING){
-                if(this->ffAudio->ffQueue->getQueueSize()>0){
+            while (this->ffAudio->ffPlayStatus == STATUS_PLAYING) {
+                if (this->ffAudio->ffQueue->getQueueSize() > 0) {
                     continue;
-                } else{
+                } else {
                     this->ffAudio->ffPlayStatus = STATUS_STOP;
                 }
             }
             break;
         }
     }
-
-    if(LOGDEBUG){
-        LOGI("decode all finished!")
+    if (this->ffCallBack != NULL) {
+        this->ffCallBack->onCompleteCallBack(CALL_CHILD);
     }
 
 }
 
 void FFmpeg::pause() {
-    if(this->ffAudio!=NULL){
+    if (this->ffAudio != NULL) {
         this->ffAudio->pause();
     }
 }
 
 void FFmpeg::play() {
-    if(this->ffAudio!=NULL){
+    if (this->ffAudio != NULL) {
         this->ffAudio->play();
     }
 }
 
 void FFmpeg::release() {
-    if(this->ffPlayStatus==STATUS_STOP){
+    if (this->ffPlayStatus == STATUS_STOP) {
         return;
-    } else{
+    } else {
         pthread_mutex_lock(&playMutex);
         this->ffAudio->ffPlayStatus = STATUS_STOP;
-        if(this->ffAudio!=NULL){
+        if (this->ffAudio != NULL) {
             this->ffAudio->release();
-            delete(this->ffAudio);
+            delete (this->ffAudio);
             this->ffAudio = NULL;
         }
-        if(this->avFormatContext!=NULL){
+        if (this->avFormatContext != NULL) {
             avformat_close_input(&avFormatContext);
             avformat_free_context(avFormatContext);
             this->avFormatContext = NULL;
@@ -187,6 +186,24 @@ void FFmpeg::release() {
     }
 
 
+}
+
+void FFmpeg::seek(int64_t seconds) {
+    if (seconds > 0 && this->ffAudio != NULL && this->ffAudio->allDuration > 0 &&
+        seconds < this->ffAudio->allDuration) {
+        int tempStatus = this->ffPlayStatus;
+        this->ffPlayStatus = STATUS_SEEK;
+        this->ffAudio->ffPlayStatus = this->ffPlayStatus;
+        this->ffAudio->ffQueue->releaseAVPacket();
+        this->ffAudio->currentTime = 0;
+        this->ffAudio->newTime = 0;
+        pthread_mutex_lock(&seekMutex);
+        int64_t seekTime = seconds * AV_TIME_BASE;
+        avformat_seek_file(this->avFormatContext, -1, INT64_MIN, seekTime, INT64_MAX, 0);
+        pthread_mutex_unlock(&seekMutex);
+        this->ffPlayStatus = tempStatus;
+        this->ffAudio->ffPlayStatus = this->ffPlayStatus;
+    }
 }
 
 

@@ -23,7 +23,7 @@ public class FFPlayer {
     }
     private String filePath;
     private OnPlayerListener onPlayerListener;
-
+    private int totalTime;
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -39,6 +39,15 @@ public class FFPlayer {
     public void onProgressCallBack(int currentTime,int totalTime){
         if(this.onPlayerListener!=null){
             this.onPlayerListener.onProgress( currentTime,totalTime );
+            this.totalTime = totalTime;
+        }
+    }
+    public int getTotalTime(){
+        return this.totalTime;
+    }
+    public void onErrorCallBack(int type,String msg){
+        if(this.onPlayerListener!=null){
+         this.onPlayerListener.onError( type,msg );
         }
     }
     public void prepare(){
@@ -66,6 +75,11 @@ public class FFPlayer {
         }
     }
 
+    public void onCompleteCallBack(){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.onComplete();
+        }
+    }
 
     public void start(){
         if(!TextUtils.isEmpty( filePath )){
@@ -102,9 +116,17 @@ public class FFPlayer {
         } ).start();
 
     }
+
+    public void seek(int seconds){
+        _seek( seconds );
+    }
+
+
+
     private native void _prepare(String filePath);
     private native void _start();
     private native void _pause();
     private native void _play() ;
     private native void _stop();
+    private native void _seek(int seconds);
 }
