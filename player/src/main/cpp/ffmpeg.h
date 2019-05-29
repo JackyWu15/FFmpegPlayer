@@ -8,9 +8,13 @@
 #include "ffcallback.h"
 #include "pthread.h"
 #include "ffaudio.h"
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
 extern "C"{
 #include "libavformat/avformat.h"
 #include "libavutil/time.h"
+#include "libswscale/swscale.h"
+#include "libavutil/imgutils.h"
 };
 
 class FFmpeg {
@@ -24,6 +28,11 @@ public:
     int ffPlayStatus ;
     pthread_mutex_t seekMutex;
 
+    int videoIndex;
+    AVCodecParameters *parameters;
+    AVCodec *avCodec;
+    AVCodecContext *avCodecContext;
+    AVPacket * avPacket;
 public:
     FFmpeg(FFCallBack *ffCallBack, const char* filePath);
     ~FFmpeg();
@@ -36,6 +45,10 @@ public:
     void play();//播放
     void release();
     void seek(int64_t seconds);
+
+
+    void video_prepare();
+    void video_start(JNIEnv *env, jobject surface);
 };
 
 

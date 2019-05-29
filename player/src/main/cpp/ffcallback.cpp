@@ -11,7 +11,7 @@ FFCallBack::FFCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
 
     //获取java方法methodId
     jclass jcls = jniEnv->GetObjectClass(jobj);
-    if(jcls==NULL&&LOGDEBUG){
+    if(jcls== nullptr&&LOGDEBUG){
         LOGE("get class error")
         return;
     }

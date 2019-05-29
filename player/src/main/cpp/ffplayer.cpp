@@ -97,3 +97,30 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1seek(JNIEnv *env, jobject instanc
         ffmpeg->seek(seconds);
     }
 }
+
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1video_1prepare(JNIEnv *env, jobject instance,
+                                                              jstring filePath_) {
+    const char *filePath = env->GetStringUTFChars(filePath_, 0);
+    if(ffmpeg==NULL){
+        if(ffCallBack==NULL){
+            ffCallBack = new FFCallBack(javaVM, env, env->NewGlobalRef(instance));
+        }
+        ffmpeg = new FFmpeg(ffCallBack,filePath);
+        ffmpeg->video_prepare();
+    }
+
+    env->ReleaseStringUTFChars(filePath_, filePath);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1video_1start(JNIEnv *env, jobject instance,
+                                                            jobject surface) {
+    if(ffmpeg!=NULL){
+        ffmpeg->video_start(env,surface);
+    }
+}

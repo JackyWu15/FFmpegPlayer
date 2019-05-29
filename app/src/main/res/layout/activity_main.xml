@@ -7,47 +7,17 @@
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
     <Button
-        android:id="@+id/bt_play"
+        android:id="@+id/bt_audio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="播放"
+        android:onClick="audio"
+        android:text="音频播放"
         />
     <Button
-        android:id="@+id/bt_pause"
+        android:id="@+id/bt_video"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="暂停"
+        android:onClick="video"
+        android:text="视频播放"
         />
-    <Button
-        android:id="@+id/bt_stop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="停止"
-        />
-    <SeekBar
-        android:id="@+id/sb_current"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp"
-        >
-    <TextView
-        android:id="@+id/tv_currentTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="00/"
-        />
-    <TextView
-        android:id="@+id/tv_totalTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="00"
-        />
-
-    </LinearLayout>
 </LinearLayout>

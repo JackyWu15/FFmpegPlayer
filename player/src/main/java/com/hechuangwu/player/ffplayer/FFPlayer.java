@@ -1,6 +1,7 @@
 package com.hechuangwu.player.ffplayer;
 
 import android.text.TextUtils;
+import android.view.Surface;
 
 import com.hechuangwu.player.listener.OnPlayerListener;
 import com.hechuangwu.player.log.MyLog;
@@ -122,6 +123,23 @@ public class FFPlayer {
     }
 
 
+    public void videoPrepare(){
+        if(!TextUtils.isEmpty( filePath )){
+            new Thread( new Runnable() {
+                @Override
+                public void run() {
+                    _video_prepare( filePath );
+                }
+            } ).start();
+        }else {
+            MyLog.e( "filePath is empty!" );
+        }
+    }
+
+    public void videoStart(Surface surface){
+        _video_start( surface );
+    }
+
 
     private native void _prepare(String filePath);
     private native void _start();
@@ -129,4 +147,8 @@ public class FFPlayer {
     private native void _play() ;
     private native void _stop();
     private native void _seek(int seconds);
+
+    private native void _video_prepare(String filePath);
+    private native void _video_start(Surface surface);
+
 }

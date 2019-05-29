@@ -206,5 +206,154 @@ void FFmpeg::seek(int64_t seconds) {
     }
 }
 
+void FFmpeg::video_prepare() {
+    LOGI("%s", avcodec_configuration());
+
+    int ret = 0;
+    av_register_all();
+
+    avformat_network_init();
+    avFormatContext = avformat_alloc_context();
+
+    ret = avformat_open_input(&avFormatContext, this->filePath, NULL, NULL);
+    if (ret != 0) {
+        LOGE("avformat_open_input error file is %s", this->filePath);
+        return;
+    }
+
+    ret = avformat_find_stream_info(avFormatContext, NULL);
+    if (ret < 0) {
+        LOGE("avformat_find_stream_info error");
+        return;
+    }
+
+    videoIndex = -1;
+    int i = 0;
+    for (i; i < avFormatContext->nb_streams; i++) {
+        if (avFormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            videoIndex = i;
+        }
+    }
+    if (videoIndex == -1) {
+        LOGE("video streams is empty");
+        return;
+    }
+
+    parameters = avFormatContext->streams[videoIndex]->codecpar;
+
+    avCodec = avcodec_find_decoder(parameters->codec_id);
+
+    avCodecContext = avcodec_alloc_context3(avCodec);
+
+    ret = avcodec_parameters_to_context(avCodecContext, parameters);
+    if (ret < 0) {
+        LOGE("avcodec_parameters_to_context error");
+        return;
+    }
+
+    ret = avcodec_open2(avCodecContext, avCodec, NULL);
+    if (ret != 0) {
+        LOGE("avcodec_open2 error");
+        return;
+    }
+    // uint8_t * out_buffer = (uint8_t *)av_malloc(av_image_get_buffer_size(AV_PIX_FMT_YUV420P, avcodecContext->width, avcodecContext->height,1));
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+
+    ffCallBack->onPrepareCallBack(CALL_MAIN);
+
+}
+
+void FFmpeg::video_start(JNIEnv *env, jobject surface) {
+    int ret = 0;
+
+    //FILE *file_out_h264 = fopen("/data/data/com.hechuangwu.ffmpegplayer/out.h264", "wb+");
+    //FILE *file_out_yuv = fopen("/data/data/com.hechuangwu.ffmpegplayer/out.yuv", "wb+");
+
+//    if (file_out_h264 == NULL) {
+//        LOGE("fopen h264 error");
+//        return;
+//    }
+//    if (file_out_yuv == NULL) {
+//        LOGE("fopen yuv error");
+//        return;
+//    }
+
+    AVFrame *avFrame, *avFrameRGB;
+    avFrame = av_frame_alloc();
+    avFrameRGB = av_frame_alloc();
+
+    ANativeWindow *nativeWindow = ANativeWindow_fromSurface(env, surface);
+    ANativeWindow_setBuffersGeometry(nativeWindow, avCodecContext->width, avCodecContext->height,
+                                     WINDOW_FORMAT_RGBA_8888);
+    ANativeWindow_Buffer window_buffer;
+
+
+    //一帧缓存大小
+    uint8_t *buffer = (uint8_t *) av_malloc(av_image_get_buffer_size(AV_PIX_FMT_RGBA, avCodecContext->width, avCodecContext->height,
+                                     1) * sizeof(uint8_t *));
+    //初始化avFrame为rgba格式
+    av_image_fill_arrays(avFrameRGB->data, avFrameRGB->linesize, buffer, AV_PIX_FMT_RGBA,
+                         avCodecContext->width, avCodecContext->height, 1);
+
+    //初始化格式转换器
+    SwsContext *swsContext = sws_getContext(avCodecContext->width, avCodecContext->height,
+                                            avCodecContext->pix_fmt, avCodecContext->width,
+                                            avCodecContext->height, AV_PIX_FMT_RGBA, SWS_BILINEAR,
+                                            NULL, NULL, NULL);
+
+
+    while (av_read_frame(avFormatContext, avPacket) >= 0) {
+        if (avPacket->stream_index == videoIndex) {
+//            fwrite(avPacket->data, 1, avPacket->size, file_out_h264);
+
+            ret = avcodec_send_packet(avCodecContext, avPacket);
+            while (ret >= 0) {
+                ret = avcodec_receive_frame(avCodecContext, avFrame);
+                if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+                    break;
+                }
+                ANativeWindow_lock(nativeWindow, &window_buffer, 0);
+
+                //转换格式
+                sws_scale(swsContext, avFrame->data, avFrame->linesize, 0, avCodecContext->height,
+                          avFrameRGB->data, avFrameRGB->linesize);
+
+                //窗体数据
+                uint8_t *dst = (uint8_t *) window_buffer.bits;
+                //窗体一行数据
+                int dstStride = window_buffer.stride * 4;
+
+                uint8_t *src = avFrameRGB->data[0];
+                int srcStride = avFrameRGB->linesize[0];
+
+                int height;
+                for (height = 0; height < avCodecContext->height; height++) {
+                    memcpy(dst + height * dstStride, src + height * srcStride, srcStride);
+                }
+
+                ANativeWindow_unlockAndPost(nativeWindow);
+
+                usleep(1000*16);
+
+//                fwrite(avFrame->data[0], 1, avcodecContext->width * avcodecContext->height, file_out_yuv);
+//                fwrite(avFrame->data[1], 1, avcodecContext->width * avcodecContext->height / 4, file_out_yuv);
+//                fwrite(avFrame->data[2], 1, avcodecContext->width * avcodecContext->height / 4, file_out_yuv);
+//                fflush(file_out_yuv);
+//                LOGI("第%d帧",avcodecContext->frame_number)
+            }
+        }
+        av_packet_unref(avPacket);
+    }
+
+//    fclose(file_out_h264);
+//    fclose(file_out_yuv);
+    av_frame_free(&avFrame);
+    av_frame_free(&avFrameRGB);
+    av_packet_free(&avPacket);
+    avcodec_close(avCodecContext);
+    avformat_close_input(&avFormatContext);
+    sws_freeContext(swsContext);
+}
+
 
 
