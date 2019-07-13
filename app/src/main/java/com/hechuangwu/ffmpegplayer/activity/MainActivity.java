@@ -55,4 +55,5 @@ public class MainActivity extends Activity {
             }, new String[]{Manifest.permission.RECORD_AUDIO} );
         }
     }
+
 }

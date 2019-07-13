@@ -2,10 +2,12 @@ package com.hechuangwu.ffmpegplayer.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.UserHandle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.hechuangwu.ffmpegplayer.R;
 import com.hechuangwu.ffmpegplayer.utls.Utils;
+import com.hechuangwu.player.ChannelEnum;
 import com.hechuangwu.player.ffplayer.FFPlayer;
 import com.hechuangwu.player.listener.OnPlayerListener;
 
@@ -36,6 +39,10 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     private boolean isStop = true;
     private boolean isPause;
     private SeekBar mSbCurrent;
+    private SeekBar mSb_volume;
+    private TextView mTv_volume;
+    private SeekBar mSb_tempo;
+    private TextView mTv_tempo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +59,20 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         mSbCurrent = findViewById( R.id.sb_current );
         mTvCurrentTime = findViewById( R.id.tv_currentTime );
         mTvTotalTime = findViewById( R.id.tv_totalTime );
+        mSb_volume = findViewById( R.id.sb_volume );
+        mTv_volume = findViewById( R.id.tv_volume );
+        mSb_tempo = findViewById( R.id.sb_tempo );
+        mTv_tempo = findViewById( R.id.tv_tempo );
     }
     private void initEvent() {
         mBtPause.setOnClickListener( this );
         mBtPlay.setOnClickListener( this );
         mBtStop.setOnClickListener( this );
-        mSbCurrent.setMax( 95 );
+        mSbCurrent.setMax( 100 );
+        mSbCurrent.setProgress( 100 );
+        mSb_tempo.setMax( 20 );
+        mSb_tempo.setProgress( 10 );
+
         mSbCurrent.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -110,12 +125,55 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 } );
             }
         } );
+
+
+        mSb_volume.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mFFmpegPlayer.seekVolume(progress);
+                mTv_volume.setText("音量：" + mFFmpegPlayer.getVolumePercent() + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        } );
+
+        mSb_tempo.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float v = progress * 0.1f;
+                mFFmpegPlayer.setTempo( v );
+                mTv_tempo.setText("速度：" + v );
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        } );
     }
 
     private void initData() {
-        mFilePath = Environment.getExternalStorageDirectory()+ File.separator+"space.mp3";
+        mFilePath = Environment.getExternalStorageDirectory()+ File.separator+"Space O.mp3";
         //        mFilePath = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
         mFFmpegPlayer = new FFPlayer();
+        mFFmpegPlayer.setFilePath( mFilePath );
+        mFFmpegPlayer.setChannel( ChannelEnum.CENTER );
+        mFFmpegPlayer.setPitch( 1.0f );
+        mFFmpegPlayer.setTempo( 1.0f );
     }
     @Override
     public void onClick(View view) {
@@ -126,7 +184,6 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                         String [] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                         ActivityCompat.requestPermissions( this, permission, PERMISSION_CODE );
                     }else {
-                        mFFmpegPlayer.setFilePath( mFilePath );
                         mFFmpegPlayer.prepare();
                     }
                 }else if(isPause){
@@ -152,5 +209,27 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 mFFmpegPlayer.prepare();
                 break;
         }
+    }
+
+    @Override
+    public synchronized ComponentName startForegroundServiceAsUser(Intent service, UserHandle user) {
+        return null;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    public void left(View view) {
+        mFFmpegPlayer.setChannel( ChannelEnum.LEFT );
+    }
+
+    public void right(View view) {
+        mFFmpegPlayer.setChannel( ChannelEnum.RIGHT );
+    }
+
+    public void center(View view) {
+        mFFmpegPlayer.setChannel( ChannelEnum.CENTER );
     }
 }

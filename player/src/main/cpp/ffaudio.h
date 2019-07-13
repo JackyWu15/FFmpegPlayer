@@ -7,12 +7,17 @@
 
 #include "ffqueue.h"
 #include "ffcallback.h"
+#include "SoundTouch.h"
+using namespace soundtouch;
+
 #define STATUS_INIT (-1)
 #define STATUS_LOADING (0)
 #define STATUS_PLAYING (1)
 #define STATUS_STOP (2)
 #define STATUS_SEEK (3)
-#define BITRATE 48000*2*2
+
+#define SAMPLERATE 48000
+#define BITRATE SAMPLERATE*2*2
 
 extern "C"{
 #include "libavformat/avformat.h"
@@ -59,6 +64,9 @@ public:
     SLPlayItf slPlayItf = NULL;
     //音量接口
     SLVolumeItf slVolumeItf = NULL;
+    //声道接口
+    SLMuteSoloItf slMuteSoloItf = NULL;
+
     //输入播放器队列
     SLAndroidSimpleBufferQueueItf  slAndroidSimpleBufferQueueItf =NULL;
     //avframe时间单位
@@ -72,17 +80,29 @@ public:
     //时间间隔
     int newTime;
 
+    SoundTouch *soundTouch = NULL;
+    SAMPLETYPE *sampleBuffer = NULL;
+    bool isFinish = true;
+    uint8_t *out_buffer = NULL;
+    int nb = 0;
+    int num = 0;
+
 public:
     FFAudio(FFCallBack* ffCallBack);
     ~FFAudio();
 
     void start();
     void createOpenSLES();
-    int resample();
+    int resample(void **buffer);
     void pause();
     void play();
     void release();
+    void setVolume(int percent);
+    void setChannel(int channel);
 
+    int getSoundTouchData();
+    void setPitch(float pitch);
+    void setTempo(float tempo);
 };
 
 

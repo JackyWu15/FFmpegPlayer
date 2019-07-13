@@ -279,6 +279,7 @@ void FFmpeg::video_start(JNIEnv *env, jobject surface) {
 //    }
 
     AVFrame *avFrame, *avFrameRGB;
+    //此处未真正分配内存
     avFrame = av_frame_alloc();
     avFrameRGB = av_frame_alloc();
 
@@ -288,10 +289,10 @@ void FFmpeg::video_start(JNIEnv *env, jobject surface) {
     ANativeWindow_Buffer window_buffer;
 
 
-    //一帧缓存大小
+    //分配内存
     uint8_t *buffer = (uint8_t *) av_malloc(av_image_get_buffer_size(AV_PIX_FMT_RGBA, avCodecContext->width, avCodecContext->height,
                                      1) * sizeof(uint8_t *));
-    //初始化avFrame为rgba格式
+    //将avFrame指定为rgba格式，并指向分配的内存
     av_image_fill_arrays(avFrameRGB->data, avFrameRGB->linesize, buffer, AV_PIX_FMT_RGBA,
                          avCodecContext->width, avCodecContext->height, 1);
 
@@ -323,6 +324,7 @@ void FFmpeg::video_start(JNIEnv *env, jobject surface) {
                 //窗体一行数据
                 int dstStride = window_buffer.stride * 4;
 
+                //rgba存储为packed格式，只用0角标进行数据存储
                 uint8_t *src = avFrameRGB->data[0];
                 int srcStride = avFrameRGB->linesize[0];
 
@@ -353,6 +355,23 @@ void FFmpeg::video_start(JNIEnv *env, jobject surface) {
     avcodec_close(avCodecContext);
     avformat_close_input(&avFormatContext);
     sws_freeContext(swsContext);
+}
+
+void FFmpeg::setVolume(int percent) {
+    this->ffAudio->setVolume(percent);
+}
+
+void FFmpeg::setChannel(int channel) {
+    this->ffAudio->setChannel(channel);
+
+}
+
+void FFmpeg::setPitch(float pitch) {
+    this->ffAudio->setPitch(pitch);
+}
+
+void FFmpeg::setTempo(float tempo) {
+    this->ffAudio->setTempo(tempo);
 }
 
 

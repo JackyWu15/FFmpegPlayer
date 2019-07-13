@@ -3,6 +3,7 @@ package com.hechuangwu.player.ffplayer;
 import android.text.TextUtils;
 import android.view.Surface;
 
+import com.hechuangwu.player.ChannelEnum;
 import com.hechuangwu.player.listener.OnPlayerListener;
 import com.hechuangwu.player.log.MyLog;
 
@@ -25,6 +26,11 @@ public class FFPlayer {
     private String filePath;
     private OnPlayerListener onPlayerListener;
     private int totalTime;
+    private  int volumePercent = 100;
+    private   ChannelEnum channel = ChannelEnum.LEFT;
+    private float pitch = 1.0f;
+    private float tempo = 1.0f;
+
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -87,6 +93,11 @@ public class FFPlayer {
             new Thread( new Runnable() {
                 @Override
                 public void run() {
+                    seekVolume(volumePercent);
+                    setTempo( tempo );
+                    setPitch( pitch );
+                    setChannel( channel );
+                    setVolumePercent( volumePercent );
                     _start();
                 }
             } ).start();
@@ -122,6 +133,40 @@ public class FFPlayer {
         _seek( seconds );
     }
 
+    public void seekVolume(int percent){
+        if(percent >=0 && percent <= 100)
+        {
+            this.volumePercent = percent;
+            _setVolume( percent );
+        }
+    }
+
+    public void setVolumePercent(int volumePercent) {
+        seekVolume(volumePercent);
+    }
+    public int getVolumePercent()
+    {
+        return volumePercent;
+    }
+
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+        _setPitch( pitch );
+    }
+
+    public void setTempo(float tempo) {
+        this.tempo = tempo;
+        _setTempo( tempo );
+    }
+
+    public void setChannel(ChannelEnum channelEnum){
+        channel = channelEnum;
+        _setChannel(channelEnum.getType());
+    }
+
+
+
+
 
     public void videoPrepare(){
         if(!TextUtils.isEmpty( filePath )){
@@ -147,6 +192,11 @@ public class FFPlayer {
     private native void _play() ;
     private native void _stop();
     private native void _seek(int seconds);
+    private native void _setVolume(int percent);
+    private native void _setChannel(int channel);
+    private native void _setPitch(float pitch);
+    private native void _setTempo(float tempo);
+
 
     private native void _video_prepare(String filePath);
     private native void _video_start(Surface surface);

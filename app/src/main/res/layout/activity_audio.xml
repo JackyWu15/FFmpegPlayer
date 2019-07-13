@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MainActivity">
+   >
     <Button
         android:id="@+id/bt_play"
         android:layout_width="match_parent"
@@ -50,4 +50,57 @@
             />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/tv_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:text="音量"
+        />
+    <SeekBar
+        android:id="@+id/sb_volume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="100"
+        android:layout_marginTop="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="左声道"
+            android:onClick="left"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="右声道"
+            android:onClick="right"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="立体声"
+            android:onClick="center"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_tempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:text="调速"
+        />
+    <SeekBar
+        android:id="@+id/sb_tempo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="50"
+        android:layout_marginTop="10dp"/>
 </LinearLayout>

@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 include_directories(src/main/cpp/include)
-
+include_directories(src/main/cpp/soundtouch/include)
 add_library(
         ffplayer
 
@@ -12,6 +12,19 @@ add_library(
         src/main/cpp/ffmpeg.cpp
         src/main/cpp/ffaudio.cpp
         src/main/cpp/ffqueue.cpp
+
+        src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp
+        src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp
+        src/main/cpp/soundtouch/SoundTouch/FIRFilter.cpp
+        src/main/cpp/soundtouch/SoundTouch/cpu_detect_x86.cpp
+        src/main/cpp/soundtouch/SoundTouch/sse_optimized.cpp
+        src/main/cpp/soundtouch/SoundTouch/RateTransposer.cpp
+        src/main/cpp/soundtouch/SoundTouch/SoundTouch.cpp
+        src/main/cpp/soundtouch/SoundTouch/InterpolateCubic.cpp
+        src/main/cpp/soundtouch/SoundTouch/InterpolateLinear.cpp
+        src/main/cpp/soundtouch/SoundTouch/InterpolateShannon.cpp
+        src/main/cpp/soundtouch/SoundTouch/TDStretch.cpp
+        src/main/cpp/soundtouch/SoundTouch/PeakFinder.cpp
 )
 
 #添加ffmpeg动态库进行关联

@@ -10,6 +10,11 @@ FFAudio::FFAudio(FFCallBack *ffCallBack) {
     this->ffQueue = new FFQueue();
     this->ffPlayStatus = STATUS_INIT;
     this->outBuffer = (uint8_t *) av_malloc(BITRATE);
+
+    this->sampleBuffer = static_cast<SAMPLETYPE *>(malloc(BITRATE));
+    this->soundTouch = new SoundTouch();
+    this->soundTouch->setSampleRate(SAMPLERATE);
+    this->soundTouch->setChannels(2);
 }
 
 FFAudio::~FFAudio() {
@@ -27,20 +32,23 @@ void FFAudio::start() {
 }
 
 
+
+
 //读取pcm数据放入缓冲队列中，提供播放器进行读取
 void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
     FFAudio *audio = (FFAudio *) pContext;
     if (audio != NULL) {
-        int dataSize = audio->resample();
+        int dataSize = audio->getSoundTouchData();
         audio->currentTime += dataSize / BITRATE;
-        LOGI("current time %d,new time %d",audio->currentTime,audio->newTime);
-        if(audio->currentTime-audio->newTime>0.1){
+        LOGI("current time %d,new time %d", audio->currentTime, audio->newTime);
+        if (audio->currentTime - audio->newTime > 0.1) {
             audio->newTime = audio->currentTime;
-            audio->ffCallBack->onProgressCallBack(CALL_CHILD,audio->currentTime,audio->allDuration);
+            audio->ffCallBack->onProgressCallBack(CALL_CHILD, audio->currentTime,
+                                                  audio->allDuration);
         }
         if (dataSize > 0) {
-            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,
-                                                             audio->outBuffer, dataSize);
+//            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->outBuffer, dataSize);
+            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->sampleBuffer, dataSize*4);//以4个字节播放，因为双声道，16位
         }
     }
 
@@ -94,10 +102,10 @@ void FFAudio::createOpenSLES() {
     SLDataSink slDataSink = {&outputMix, NULL};
 
     //创建播放器
-    const SLInterfaceID slInterfaceID[3] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME};
-    const SLboolean sLboolean[3] = {SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE};
+    const SLInterfaceID slInterfaceID[4] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME,SL_IID_MUTESOLO};
+    const SLboolean sLboolean[4] = {SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE,SL_BOOLEAN_FALSE};
     (*slEngineItf)->CreateAudioPlayer(slEngineItf, &slPCMPlayerObject, &slDataSource, &slDataSink,
-                                      3, slInterfaceID, sLboolean);
+                                      4, slInterfaceID, sLboolean);
     //初始化播放器
     (*slPCMPlayerObject)->Realize(slPCMPlayerObject, SL_BOOLEAN_FALSE);
     //获取播放接口
@@ -110,14 +118,22 @@ void FFAudio::createOpenSLES() {
                                                        simpleBufferCallBack, this);
     //获取音量接口
     (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_VOLUME, &slVolumeItf);
+
+    //获取声道接口
+    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_MUTESOLO, &slMuteSoloItf);
     //设置播放状态
     (*slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PLAYING);
+
     //调用缓冲回调开始播放
     simpleBufferCallBack(slAndroidSimpleBufferQueueItf, this);
 }
 
-
-int FFAudio::resample() {
+/**
+ * 从队列中取出帧数据解析成pcm数据
+ * @param out_buffer pcm数据
+ * @return
+ */
+int FFAudio::resample(void **out_buffer) {
     if (this->ffQueue->getQueueSize() == 0) {
         if (this->ffPlayStatus != STATUS_LOADING) {
             this->ffPlayStatus = STATUS_LOADING;
@@ -148,6 +164,7 @@ int FFAudio::resample() {
                     this->avFrame->channels = av_get_channel_layout_nb_channels(
                             this->avFrame->channels);
                 }
+
                 //对AVFrame进行重采样，这里保持和源数据相同参数
                 SwrContext *swrContext;
                 swrContext = swr_alloc_set_opts(
@@ -159,8 +176,8 @@ int FFAudio::resample() {
                         (AVSampleFormat) this->avFrame->format,//传入采样位数
                         this->avFrame->sample_rate,//传入采样率
                         NULL, NULL//日志参数
-
                 );
+
                 //初始化失败
                 if (!swrContext || swr_init(swrContext) < 0) {
                     av_packet_free(&this->avPacket);
@@ -174,7 +191,7 @@ int FFAudio::resample() {
                 }
 
                 //开始转码,返回输出的采样率
-                int resample = swr_convert(
+                nb = swr_convert(
                         swrContext,
                         &this->outBuffer,//输出大小
                         this->avFrame->nb_samples,//输出采样个数
@@ -182,17 +199,18 @@ int FFAudio::resample() {
                         this->avFrame->nb_samples//输入采样个数
                 );
                 int outChannels = av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO);
-                this->dataSize = resample * outChannels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+                this->dataSize = nb * outChannels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
                 if (LOGDEBUG) {
-                    LOGI("data size is %d", this->dataSize);
+                    LOGI("data size is %d,nb size is %d", this->dataSize,nb);
                 }
-                this->frameDuration = avFrame->pts*av_q2d(this->avRational);
-                if(this->frameDuration>this->currentTime){
+                this->frameDuration = avFrame->pts * av_q2d(this->avRational);
+                if (this->frameDuration > this->currentTime) {
                     this->currentTime = this->frameDuration;
-                } else{
+                } else {
                     this->frameDuration = this->currentTime;
                 }
 
+                *out_buffer = outBuffer;
                 av_packet_free(&this->avPacket);
                 av_free(avPacket);
                 this->avPacket = NULL;
@@ -222,27 +240,74 @@ int FFAudio::resample() {
     return this->dataSize;
 }
 
+/**
+ * soundtouch处理pcm数据，处理后存入sampleBuffer中,送入opengsl es中播放
+ *  函数逻辑是：解析一帧返回数据，然后处理多少个，便先输入多少到opensl es中，再回到279行重新取，直到取出为0，说明一帧数据处理完毕，紧接270行设置为true，250继续取下一帧数据
+ * @return 返回处理采样个数
+ */
+int FFAudio::getSoundTouchData() {
+    while (this->ffPlayStatus != STATUS_STOP){
+        out_buffer = NULL;
+        if(isFinish){
+            isFinish = false;
+            dataSize = resample(reinterpret_cast<void **>(&out_buffer));
+            LOGI("resample size is %d",dataSize);
+            if(dataSize>0){
+                //soundtouch只支持16位，即2个字节的数组，而ffmpeg数据是1个字节为存储的数组，需做转换
+                for(int i=0;i<dataSize/2+1;i++){
+                    sampleBuffer[i] = (out_buffer[i * 2] | ((out_buffer[i * 2 + 1]) << 8));
+                }
+                //nb为采样率，这里理论上等于dataSize/4
+                this->soundTouch->putSamples(sampleBuffer,nb);
+                //返回实际处理的采样个数，个数为0说明取出完成,datasize/4指定1个采样1字节
+                num = this->soundTouch->receiveSamples(sampleBuffer, dataSize / 4);
+            } else{
+                this->soundTouch->flush();
+            }
+
+        }
+
+        LOGI("receive num is %d",num);
+        if(num==0){
+            isFinish = true;
+            continue;
+        } else{
+            if(out_buffer==NULL){
+                num = this->soundTouch->receiveSamples(sampleBuffer,dataSize/4);
+                if(num==0){
+                    isFinish = true;
+                    continue;
+                }
+            }
+            return num;
+        }
+    }
+    return 0;
+}
+
+
+
 void FFAudio::pause() {
     if (this->slPlayItf != NULL) {
         (*this->slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PAUSED);
-        this->ffCallBack->onPauseCallBack(CALL_MAIN,true);
+        this->ffCallBack->onPauseCallBack(CALL_MAIN, true);
     }
 }
 
 void FFAudio::play() {
-    if(this->slPlayItf!=NULL){
-        (*this->slPlayItf)->SetPlayState(slPlayItf,SL_PLAYSTATE_PLAYING);
-        this->ffCallBack->onPauseCallBack(CALL_MAIN,false);
+    if (this->slPlayItf != NULL) {
+        (*this->slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PLAYING);
+        this->ffCallBack->onPauseCallBack(CALL_MAIN, false);
     }
 }
 
 void FFAudio::release() {
-    if(ffQueue!=NULL){
-        delete(ffQueue);
-       ffQueue = NULL;
+    if (ffQueue != NULL) {
+        delete (ffQueue);
+        ffQueue = NULL;
     }
 
-    if(slPCMPlayerObject!=NULL){
+    if (slPCMPlayerObject != NULL) {
         (*slPCMPlayerObject)->Destroy(slPCMPlayerObject);
         slPCMPlayerObject = NULL;
         slPlayItf = NULL;
@@ -250,19 +315,19 @@ void FFAudio::release() {
         slVolumeItf = NULL;
     }
 
-    if(slOutputMixObject!=NULL){
+    if (slOutputMixObject != NULL) {
         (*slOutputMixObject)->Destroy(slOutputMixObject);
         slOutputMixObject = NULL;
         slEnvironmentalReverbItf = NULL;
     }
 
-    if(slEngineObject!=NULL){
+    if (slEngineObject != NULL) {
         (*slEngineObject)->Destroy(slEngineObject);
         slEngineObject = NULL;
         slEngineItf = NULL;
     }
 
-    if(avCodecContext!=NULL){
+    if (avCodecContext != NULL) {
         avcodec_close(avCodecContext);
         avcodec_free_context(&avCodecContext);
         avCodecContext = NULL;
@@ -274,6 +339,67 @@ void FFAudio::release() {
     }
 
 }
+
+
+void FFAudio::setPitch(float pitch) {
+    if(this->soundTouch!=NULL){
+        this->soundTouch->setPitch(pitch);
+    }
+}
+
+void FFAudio::setTempo(float tempo) {
+    if(this->soundTouch!=NULL){
+        this->soundTouch->setTempo(tempo);
+    }
+}
+
+
+
+void FFAudio::setVolume(int percent) {
+    if (slVolumeItf != NULL) {
+        if (percent > 30) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -20);
+        } else if (percent > 25) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -22);
+        } else if (percent > 20) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -25);
+        } else if (percent > 15) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -28);
+        } else if (percent > 10) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -30);
+        } else if (percent > 5) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -34);
+        } else if (percent > 3) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -37);
+        } else if (percent > 0) {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -40);
+        } else {
+            (*slVolumeItf)->SetVolumeLevel(slVolumeItf, (100 - percent) * -100);
+        }
+    }
+}
+
+void FFAudio::setChannel(int channel) {
+    if(slMuteSoloItf!=NULL) {
+        if (channel == 0)//right
+        {
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 1, false);
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 0, true);
+        } else if (channel == 1)//left
+        {
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 1, true);
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 0, false);
+        } else if (channel == 2)//center
+        {
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 1, false);
+            (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 0, false);
+        }
+    }
+}
+
+
+
+
 
 
 

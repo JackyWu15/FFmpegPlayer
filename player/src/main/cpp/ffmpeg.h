@@ -45,6 +45,10 @@ public:
     void play();//播放
     void release();
     void seek(int64_t seconds);
+    void setVolume(int percent);
+    void setChannel(int channel);
+    void setPitch(float pitch);
+    void setTempo(float tempo);
 
 
     void video_prepare();
