@@ -1,8 +1,11 @@
 package com.hechuangwu.ffmpegplayer.activity;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.UserHandle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -61,6 +64,11 @@ public class VideoActivity extends Activity implements SurfaceHolder.Callback {
             public void onComplete() {
 
             }
+
+            @Override
+            public void onPCMDB(int db) {
+
+            }
         } );
     }
 
@@ -74,4 +82,8 @@ public class VideoActivity extends Activity implements SurfaceHolder.Callback {
 
     }
 
+    @Override
+    public synchronized ComponentName startForegroundServiceAsUser(Intent service, UserHandle user) {
+        return null;
+    }
 }

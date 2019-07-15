@@ -88,6 +88,12 @@ public class FFPlayer {
         }
     }
 
+    public void onPCMDBCallBack(int db){
+        if(this.onPlayerListener!=null){
+            this.onPlayerListener.onPCMDB(db);
+        }
+    }
+
     public void start(){
         if(!TextUtils.isEmpty( filePath )){
             new Thread( new Runnable() {

@@ -11,4 +11,5 @@ public interface OnPlayerListener {
     void onError(int type,String msg);
     void onProgress(int currentTime,int totalTime);
     void onComplete( );
+    void onPCMDB(int db);
 }

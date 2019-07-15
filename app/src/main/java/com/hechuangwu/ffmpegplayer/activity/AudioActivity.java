@@ -43,6 +43,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     private TextView mTv_volume;
     private SeekBar mSb_tempo;
     private TextView mTv_tempo;
+    private TextView mTv_db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +63,14 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         mSb_volume = findViewById( R.id.sb_volume );
         mTv_volume = findViewById( R.id.tv_volume );
         mSb_tempo = findViewById( R.id.sb_tempo );
-        mTv_tempo = findViewById( R.id.tv_tempo );
+        mTv_db = findViewById( R.id.tv_db );
     }
     private void initEvent() {
         mBtPause.setOnClickListener( this );
         mBtPlay.setOnClickListener( this );
         mBtStop.setOnClickListener( this );
         mSbCurrent.setMax( 100 );
-        mSbCurrent.setProgress( 100 );
+        mSbCurrent.setProgress( 0 );
         mSb_tempo.setMax( 20 );
         mSb_tempo.setProgress( 10 );
 
@@ -114,6 +115,19 @@ public class AudioActivity extends Activity implements View.OnClickListener {
             public void onComplete() {
                 Log.i( "data", "onComplete: >>>>>>>>>播放完成" );
             }
+
+            @Override
+            public void onPCMDB(final int db) {
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i( "data", "分贝值为: "+db );
+                        mTv_db.setText( "分贝："+db );
+                    }
+                } );
+
+            }
+
             @Override
             public void onProgress(final int currentTime, final int totalTime) {
                 runOnUiThread( new Runnable() {

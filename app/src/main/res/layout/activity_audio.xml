@@ -24,12 +24,7 @@
         android:layout_height="wrap_content"
         android:text="停止"
         />
-    <SeekBar
-        android:id="@+id/sb_current"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,14 +45,38 @@
             />
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/tv_volume"
+    <SeekBar
+        android:id="@+id/sb_current"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        />
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:text="音量"
-        />
+        android:layout_margin="10dp"
+        >
+        <TextView
+            android:id="@+id/tv_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:text="音量"
+            />
+        <TextView
+            android:id="@+id/tv_db"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:text="分贝"
+            />
+
+    </RelativeLayout>
+
     <SeekBar
         android:id="@+id/sb_volume"
         android:layout_width="match_parent"

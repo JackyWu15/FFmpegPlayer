@@ -21,6 +21,7 @@ FFCallBack::FFCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
     this->jmethod_pause = jniEnv->GetMethodID(jcls,"onPauseCallBack","(Z)V");
     this->jmethod_error = jniEnv->GetMethodID(jcls,"onErrorCallBack","(ILjava/lang/String;)V");
     this->jmethod_complete = jniEnv->GetMethodID(jcls,"onCompleteCallBack","()V");
+    this->jmethod_db = jniEnv->GetMethodID(jcls,"onPCMDBCallBack","(I)V");
 
 }
 FFCallBack::~FFCallBack() {
@@ -122,6 +123,22 @@ void FFCallBack::onCompleteCallBack(int type) {
             return;
         }
         env->CallVoidMethod(this->jobj,this->jmethod_complete);
+        this->javaVM->DetachCurrentThread();
+    }
+}
+
+void FFCallBack::onPCMDBCallBack(int type,int db) {
+    if(type==CALL_MAIN){
+        this->jniEnv->CallVoidMethod(this->jobj,this->jmethod_db,db);
+    } else if(type==CALL_CHILD){
+        JNIEnv* env;
+        if(this->javaVM->AttachCurrentThread(&env,0)!=JNI_OK){
+            if(LOGDEBUG){
+                LOGE("attach jniEnv failed!");
+            }
+            return;
+        }
+        env->CallVoidMethod(this->jobj,this->jmethod_db,db);
         this->javaVM->DetachCurrentThread();
     }
 }

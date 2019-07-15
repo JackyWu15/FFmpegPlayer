@@ -34,100 +34,6 @@ void FFAudio::start() {
 
 
 
-//读取pcm数据放入缓冲队列中，提供播放器进行读取
-void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
-    FFAudio *audio = (FFAudio *) pContext;
-    if (audio != NULL) {
-        int dataSize = audio->getSoundTouchData();
-        audio->currentTime += dataSize / BITRATE;
-        LOGI("current time %d,new time %d", audio->currentTime, audio->newTime);
-        if (audio->currentTime - audio->newTime > 0.1) {
-            audio->newTime = audio->currentTime;
-            audio->ffCallBack->onProgressCallBack(CALL_CHILD, audio->currentTime,
-                                                  audio->allDuration);
-        }
-        if (dataSize > 0) {
-//            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->outBuffer, dataSize);
-            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->sampleBuffer, dataSize*4);//以4个字节播放，因为双声道，16位
-        }
-    }
-
-}
-
-void FFAudio::createOpenSLES() {
-    //创建引擎对象
-    slCreateEngine(&slEngineObject, 0, 0, 0, 0, 0);
-    //初始化引擎
-    (*slEngineObject)->Realize(slEngineObject, SL_BOOLEAN_FALSE);
-    //获取引擎接口
-    (*slEngineObject)->GetInterface(slEngineObject, SL_IID_ENGINE, &slEngineItf);
-
-    //通过引擎接口创建混音器对象
-    const SLInterfaceID slids[1] = {SL_IID_ENVIRONMENTALREVERB};
-    const SLboolean slbs[1] = {SL_BOOLEAN_FALSE};
-    slResult = (*slEngineItf)->CreateOutputMix(slEngineItf, &slOutputMixObject, 1, slids, slbs);
-    (void) slResult;
-    //混音器对象初始化
-    slResult = (*slOutputMixObject)->Realize(slOutputMixObject, SL_BOOLEAN_FALSE);
-    (void) slResult;
-    //混音器获取混音环境接口
-    slResult = (*slOutputMixObject)->GetInterface(slOutputMixObject, SL_IID_ENVIRONMENTALREVERB,
-                                                  &slEnvironmentalReverbItf);
-    if (SL_RESULT_SUCCESS == slResult) {
-        //通过混音环境接口设置混音环境
-        slResult = (*slEnvironmentalReverbItf)->SetEnvironmentalReverbProperties(
-                slEnvironmentalReverbItf, &slEnvironmentalReverbSettings);
-        (void) slResult;
-    }
-    //混音器关联数据定位器
-    SLDataLocator_OutputMix outputMix = {SL_DATALOCATOR_OUTPUTMIX, slOutputMixObject};
-
-    //数据队列
-    SLDataLocator_AndroidSimpleBufferQueue slDataLocator_androidSimpleBufferQueue = {
-            SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
-    //数据格式
-    SLDataFormat_PCM pcm = {
-            SL_DATAFORMAT_PCM,//pcm格式
-            2,//单声道
-            SL_SAMPLINGRATE_48,//采样率
-            SL_PCMSAMPLEFORMAT_FIXED_16,//16位
-            SL_PCMSAMPLEFORMAT_FIXED_16,//和位数相同
-            SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,//前左前右声道
-            SL_BYTEORDER_LITTLEENDIAN,//结束符号
-    };
-
-    //数据输入源配置
-    SLDataSource slDataSource = {&slDataLocator_androidSimpleBufferQueue, &pcm};
-    //数据输出源配置
-    SLDataSink slDataSink = {&outputMix, NULL};
-
-    //创建播放器
-    const SLInterfaceID slInterfaceID[4] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME,SL_IID_MUTESOLO};
-    const SLboolean sLboolean[4] = {SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE,SL_BOOLEAN_FALSE};
-    (*slEngineItf)->CreateAudioPlayer(slEngineItf, &slPCMPlayerObject, &slDataSource, &slDataSink,
-                                      4, slInterfaceID, sLboolean);
-    //初始化播放器
-    (*slPCMPlayerObject)->Realize(slPCMPlayerObject, SL_BOOLEAN_FALSE);
-    //获取播放接口
-    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_PLAY, &slPlayItf);
-    //获取缓冲队列
-    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_BUFFERQUEUE,
-                                       &slAndroidSimpleBufferQueueItf);
-    //注册缓冲回调
-    (*slAndroidSimpleBufferQueueItf)->RegisterCallback(slAndroidSimpleBufferQueueItf,
-                                                       simpleBufferCallBack, this);
-    //获取音量接口
-    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_VOLUME, &slVolumeItf);
-
-    //获取声道接口
-    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_MUTESOLO, &slMuteSoloItf);
-    //设置播放状态
-    (*slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PLAYING);
-
-    //调用缓冲回调开始播放
-    simpleBufferCallBack(slAndroidSimpleBufferQueueItf, this);
-}
-
 /**
  * 从队列中取出帧数据解析成pcm数据
  * @param out_buffer pcm数据
@@ -241,7 +147,7 @@ int FFAudio::resample(void **out_buffer) {
 }
 
 /**
- * soundtouch处理pcm数据，处理后存入sampleBuffer中,送入opengsl es中播放
+ *  soundtouch处理pcm数据，处理后存入sampleBuffer中,送入opengsl es播放
  *  函数逻辑是：解析一帧返回数据，然后处理多少个，便先输入多少到opensl es中，再回到279行重新取，直到取出为0，说明一帧数据处理完毕，紧接270行设置为true，250继续取下一帧数据
  * @return 返回处理采样个数
  */
@@ -285,6 +191,101 @@ int FFAudio::getSoundTouchData() {
     return 0;
 }
 
+
+//读取pcm数据放入缓冲队列中，提供播放器进行读取
+void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) {
+    FFAudio *audio = (FFAudio *) pContext;
+    if (audio != NULL) {
+        int dataSize = audio->getSoundTouchData();
+        audio->currentTime += dataSize / BITRATE;
+        LOGI("current time %d,new time %d", audio->currentTime, audio->newTime);
+        if (audio->currentTime - audio->newTime > 0.1) {
+            audio->newTime = audio->currentTime;
+            audio->ffCallBack->onProgressCallBack(CALL_CHILD, audio->currentTime, audio->allDuration);
+        }
+        if (dataSize > 0) {
+            int db = audio->getPCMDB(reinterpret_cast<char *>(audio->sampleBuffer), dataSize * 4);
+            audio->ffCallBack->onPCMDBCallBack(CALL_CHILD,db);
+//            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->outBuffer, dataSize);
+            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->sampleBuffer, dataSize*4);//以4个字节播放，因为双声道，16位
+        }
+    }
+
+}
+
+void FFAudio::createOpenSLES() {
+    //创建引擎对象
+    slCreateEngine(&slEngineObject, 0, 0, 0, 0, 0);
+    //初始化引擎
+    (*slEngineObject)->Realize(slEngineObject, SL_BOOLEAN_FALSE);
+    //获取引擎接口
+    (*slEngineObject)->GetInterface(slEngineObject, SL_IID_ENGINE, &slEngineItf);
+
+    //通过引擎接口创建混音器对象
+    const SLInterfaceID slids[1] = {SL_IID_ENVIRONMENTALREVERB};
+    const SLboolean slbs[1] = {SL_BOOLEAN_FALSE};
+    slResult = (*slEngineItf)->CreateOutputMix(slEngineItf, &slOutputMixObject, 1, slids, slbs);
+    (void) slResult;
+    //混音器对象初始化
+    slResult = (*slOutputMixObject)->Realize(slOutputMixObject, SL_BOOLEAN_FALSE);
+    (void) slResult;
+    //混音器获取混音环境接口
+    slResult = (*slOutputMixObject)->GetInterface(slOutputMixObject, SL_IID_ENVIRONMENTALREVERB,
+                                                  &slEnvironmentalReverbItf);
+    if (SL_RESULT_SUCCESS == slResult) {
+        //通过混音环境接口设置混音环境
+        slResult = (*slEnvironmentalReverbItf)->SetEnvironmentalReverbProperties(
+                slEnvironmentalReverbItf, &slEnvironmentalReverbSettings);
+        (void) slResult;
+    }
+    //混音器关联数据定位器
+    SLDataLocator_OutputMix outputMix = {SL_DATALOCATOR_OUTPUTMIX, slOutputMixObject};
+
+    //数据队列
+    SLDataLocator_AndroidSimpleBufferQueue slDataLocator_androidSimpleBufferQueue = {
+            SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
+    //数据格式
+    SLDataFormat_PCM pcm = {
+            SL_DATAFORMAT_PCM,//pcm格式
+            2,//单声道
+            SL_SAMPLINGRATE_48,//采样率
+            SL_PCMSAMPLEFORMAT_FIXED_16,//16位
+            SL_PCMSAMPLEFORMAT_FIXED_16,//和位数相同
+            SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,//前左前右声道
+            SL_BYTEORDER_LITTLEENDIAN,//结束符号
+    };
+
+    //数据输入源配置
+    SLDataSource slDataSource = {&slDataLocator_androidSimpleBufferQueue, &pcm};
+    //数据输出源配置
+    SLDataSink slDataSink = {&outputMix, NULL};
+
+    //创建播放器
+    const SLInterfaceID slInterfaceID[4] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME,SL_IID_MUTESOLO};
+    const SLboolean sLboolean[4] = {SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE, SL_BOOLEAN_FALSE,SL_BOOLEAN_FALSE};
+    (*slEngineItf)->CreateAudioPlayer(slEngineItf, &slPCMPlayerObject, &slDataSource, &slDataSink,
+                                      4, slInterfaceID, sLboolean);
+    //初始化播放器
+    (*slPCMPlayerObject)->Realize(slPCMPlayerObject, SL_BOOLEAN_FALSE);
+    //获取播放接口
+    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_PLAY, &slPlayItf);
+    //获取缓冲队列
+    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_BUFFERQUEUE,
+                                       &slAndroidSimpleBufferQueueItf);
+    //注册缓冲回调
+    (*slAndroidSimpleBufferQueueItf)->RegisterCallback(slAndroidSimpleBufferQueueItf,
+                                                       simpleBufferCallBack, this);
+    //获取音量接口
+    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_VOLUME, &slVolumeItf);
+
+    //获取声道接口
+    (*slPCMPlayerObject)->GetInterface(slPCMPlayerObject, SL_IID_MUTESOLO, &slMuteSoloItf);
+    //设置播放状态
+    (*slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PLAYING);
+
+    //调用缓冲回调开始播放
+    simpleBufferCallBack(slAndroidSimpleBufferQueueItf, this);
+}
 
 
 void FFAudio::pause() {
@@ -395,6 +396,28 @@ void FFAudio::setChannel(int channel) {
             (*slMuteSoloItf)->SetChannelMute(slMuteSoloItf, 0, false);
         }
     }
+}
+
+/**
+ * 获取声音分贝值
+ * @param pcmData
+ * @param pcmSize
+ * @return
+ */
+int FFAudio::getPCMDB(char *pcmData, size_t pcmSize) {
+    int db = 0;
+    short int perValue = 0;
+    double sum = 0;
+    for(int i =0;i<pcmSize;i+=2){
+        memcpy(&perValue,pcmData+i,2);
+        sum += abs(perValue);
+    }
+    sum = sum / (pcmSize / 2);
+    if(sum > 0)
+    {
+        db = (int)20.0 *log10(sum);
+    }
+    return db;
 }
 
 

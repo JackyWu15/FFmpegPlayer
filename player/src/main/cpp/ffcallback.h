@@ -23,6 +23,7 @@ public:
     jmethodID jmethod_pause;
     jmethodID jmethod_error;
     jmethodID jmethod_complete;
+    jmethodID jmethod_db;
 public:
     FFCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
     ~FFCallBack();
@@ -34,6 +35,7 @@ public:
     void onProgressCallBack(int type,int currentTime,int totalTime);
     void onErrorCallBack(int type,int code,char* msg);
     void onCompleteCallBack(int type);
+    void onPCMDBCallBack(int type,int db);
 };
 
 

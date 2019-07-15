@@ -103,6 +103,8 @@ public:
     int getSoundTouchData();
     void setPitch(float pitch);
     void setTempo(float tempo);
+
+    int getPCMDB(char *pcmData,size_t pcmSize);
 };
 
 
