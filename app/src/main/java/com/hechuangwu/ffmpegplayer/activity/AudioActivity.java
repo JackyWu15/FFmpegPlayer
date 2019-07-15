@@ -62,6 +62,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         mTvTotalTime = findViewById( R.id.tv_totalTime );
         mSb_volume = findViewById( R.id.sb_volume );
         mTv_volume = findViewById( R.id.tv_volume );
+        mTv_tempo = findViewById( R.id.tv_tempo );
         mSb_tempo = findViewById( R.id.sb_tempo );
         mTv_db = findViewById( R.id.tv_db );
     }
