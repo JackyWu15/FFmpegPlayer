@@ -69,6 +69,11 @@ public class VideoActivity extends Activity implements SurfaceHolder.Callback {
             public void onPCMDB(int db) {
 
             }
+
+            @Override
+            public void onRecordTime(int recordTime) {
+
+            }
         } );
     }
 

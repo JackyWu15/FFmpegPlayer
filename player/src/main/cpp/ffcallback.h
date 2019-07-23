@@ -24,6 +24,7 @@ public:
     jmethodID jmethod_error;
     jmethodID jmethod_complete;
     jmethodID jmethod_db;
+    jmethodID jmethod_pcmtoaac;
 public:
     FFCallBack(JavaVM* javaVM,JNIEnv* jniEnv,jobject jobj);
     ~FFCallBack();
@@ -36,6 +37,7 @@ public:
     void onErrorCallBack(int type,int code,char* msg);
     void onCompleteCallBack(int type);
     void onPCMDBCallBack(int type,int db);
+    void onPCMToAACCallBack(int type,int size, void *buffer);
 };
 
 

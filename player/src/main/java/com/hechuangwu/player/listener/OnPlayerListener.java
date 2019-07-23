@@ -12,4 +12,5 @@ public interface OnPlayerListener {
     void onProgress(int currentTime,int totalTime);
     void onComplete( );
     void onPCMDB(int db);
+    void onRecordTime(int recordTime);
 }

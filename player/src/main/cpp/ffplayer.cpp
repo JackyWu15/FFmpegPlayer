@@ -170,3 +170,21 @@ Java_com_hechuangwu_player_ffplayer_FFPlayer__1video_1start(JNIEnv *env, jobject
         ffmpeg->video_start(env, surface);
     }
 }
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1sampleRate(JNIEnv *env, jobject instance) {
+
+    if(ffmpeg!=NULL){
+        return  ffmpeg->getSampleRate();
+    }
+
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_hechuangwu_player_ffplayer_FFPlayer__1startOrStopRecord(JNIEnv *env, jobject instance,
+                                                                 jboolean start) {
+    if(ffmpeg!=NULL){
+        return  ffmpeg->startOrStopRecord(start);
+    }
+
+}

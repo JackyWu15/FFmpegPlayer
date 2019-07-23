@@ -22,6 +22,7 @@ FFCallBack::FFCallBack(JavaVM *javaVM, JNIEnv *jniEnv, jobject jobj) {
     this->jmethod_error = jniEnv->GetMethodID(jcls,"onErrorCallBack","(ILjava/lang/String;)V");
     this->jmethod_complete = jniEnv->GetMethodID(jcls,"onCompleteCallBack","()V");
     this->jmethod_db = jniEnv->GetMethodID(jcls,"onPCMDBCallBack","(I)V");
+    this->jmethod_pcmtoaac = jniEnv->GetMethodID(jcls,"encodecPCMToAAC","(I[B)V");
 
 }
 FFCallBack::~FFCallBack() {
@@ -141,6 +142,31 @@ void FFCallBack::onPCMDBCallBack(int type,int db) {
         env->CallVoidMethod(this->jobj,this->jmethod_db,db);
         this->javaVM->DetachCurrentThread();
     }
+}
+
+void FFCallBack::onPCMToAACCallBack(int type, int size, void *buffer) {
+    LOGI(">>>>>>>>>>>>>>>>>>>>>>>call");
+    if(type==CALL_MAIN){
+        jbyteArray pArray = jniEnv->NewByteArray(size);
+        jniEnv->SetByteArrayRegion(pArray, 0, size, static_cast<const jbyte *>(buffer));
+        jniEnv->CallVoidMethod(jobj,this->jmethod_pcmtoaac,size,pArray);
+        jniEnv->DeleteLocalRef(pArray);
+        
+    } else if(type==CALL_CHILD){
+        JNIEnv *env;
+        if(javaVM->AttachCurrentThread(&env,0)!=JNI_OK){
+            if(LOGDEBUG){
+                LOGE("attach jniEnv failed!");
+            }
+            return;
+        }
+        jbyteArray pArray = env->NewByteArray(size);
+        env->SetByteArrayRegion(pArray, 0, size, static_cast<const jbyte *>(buffer));
+        env->CallVoidMethod(jobj,this->jmethod_pcmtoaac,size,pArray);
+        env->DeleteLocalRef(pArray);
+        javaVM->DetachCurrentThread();
+    }
+
 }
 
 

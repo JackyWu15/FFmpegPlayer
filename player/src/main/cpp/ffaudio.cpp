@@ -27,11 +27,65 @@ void *openSLESCallBack(void *data) {
     pthread_exit(&audio->pthreadPlay);
 }
 
-void FFAudio::start() {
-    pthread_create(&pthreadPlay, NULL, openSLESCallBack, this);
+/**
+ * pcm拆成默认块大小
+ * @param data
+ * @return
+ */
+void *pcmCallBack(void *data){
+    FFAudio* ffAudio = static_cast<FFAudio *>(data);
+    while (ffAudio->ffPlayStatus!=-1){
+        PcmBean *pcmBean = NULL;
+        ffAudio->bufferQueue->getBuffer(&pcmBean);
+        if(pcmBean==NULL){
+            continue;
+        }
+
+        LOGI("pcmbean buffer size is %d", pcmBean->buffsize);
+
+        //不超过默认值，不用拆分
+        if(pcmBean->buffsize<=ffAudio->defaultPcmSize){
+            if(ffAudio->isRecord){
+                ffAudio->ffCallBack->onPCMToAACCallBack(CALL_CHILD,pcmBean->buffsize,pcmBean->buffer);
+            }
+            //超过，拆分
+        } else{
+            int defaultPcm_num = pcmBean->buffsize / ffAudio->defaultPcmSize;//拆成几块
+            int defaultPcm_left = pcmBean->buffsize % ffAudio->defaultPcmSize;//不满一块，剩余多少
+            LOGI("pcmbean buffer size is >>>>>>>>>>>>%d,>>>>>>>>>%d",defaultPcm_num,defaultPcm_left);
+            for (int i = 0; i < defaultPcm_num; ++i) {
+                char *pcm_buffer = static_cast<char *>(malloc(ffAudio->defaultPcmSize));
+                memcpy(pcm_buffer,pcmBean->buffer+i*ffAudio->defaultPcmSize,ffAudio->defaultPcmSize);
+                if(ffAudio->isRecord){
+                    ffAudio->ffCallBack->onPCMToAACCallBack(CALL_CHILD,ffAudio->defaultPcmSize,pcm_buffer);
+                }
+
+                free(pcm_buffer);
+                pcm_buffer = NULL;
+            }
+
+            if(defaultPcm_left>0){
+                char *pcm_buffer = static_cast<char *>(malloc(defaultPcm_left));
+                memcpy(pcm_buffer,pcmBean->buffer + defaultPcm_num*ffAudio->defaultPcmSize,defaultPcm_left);
+                if(ffAudio->isRecord){
+                    ffAudio->ffCallBack->onPCMToAACCallBack(CALL_CHILD,defaultPcm_left,pcm_buffer);
+                }
+                free(pcm_buffer);
+                pcm_buffer = NULL;
+            }
+        }
+        delete(pcmBean);
+        pcmBean = NULL;
+    }
+    pthread_exit(&ffAudio->pcmCallBackThread);
 }
 
 
+void FFAudio::start() {
+    pthread_create(&pthreadPlay, NULL, openSLESCallBack, this);
+    bufferQueue = new FFBufferQueue();
+    pthread_create(&pcmCallBackThread, NULL, pcmCallBack, this);
+}
 
 
 /**
@@ -204,8 +258,12 @@ void simpleBufferCallBack(SLAndroidSimpleBufferQueueItf caller, void *pContext) 
             audio->ffCallBack->onProgressCallBack(CALL_CHILD, audio->currentTime, audio->allDuration);
         }
         if (dataSize > 0) {
-            int db = audio->getPCMDB(reinterpret_cast<char *>(audio->sampleBuffer), dataSize * 4);
-            audio->ffCallBack->onPCMDBCallBack(CALL_CHILD,db);
+            //换算成音量传到java层
+            audio->ffCallBack->onPCMDBCallBack(CALL_CHILD,audio->getPCMDB(reinterpret_cast<char *>(audio->sampleBuffer), dataSize * 4));
+            //放入队列，用于mediaCodec转码
+            audio->bufferQueue->playStatus = 1;
+            audio->bufferQueue->putBuffer(audio->sampleBuffer,dataSize*4);
+
 //            (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->outBuffer, dataSize);
             (*audio->slAndroidSimpleBufferQueueItf)->Enqueue(audio->slAndroidSimpleBufferQueueItf,audio->sampleBuffer, dataSize*4);//以4个字节播放，因为双声道，16位
         }
@@ -295,11 +353,14 @@ void FFAudio::pause() {
     }
 }
 
+
+
 void FFAudio::play() {
     if (this->slPlayItf != NULL) {
         (*this->slPlayItf)->SetPlayState(slPlayItf, SL_PLAYSTATE_PLAYING);
         this->ffCallBack->onPauseCallBack(CALL_MAIN, false);
     }
+
 }
 
 void FFAudio::release() {
@@ -418,6 +479,10 @@ int FFAudio::getPCMDB(char *pcmData, size_t pcmSize) {
         db = (int)20.0 *log10(sum);
     }
     return db;
+}
+
+void FFAudio::startOrStopRecord(bool start) {
+    this->isRecord = start;
 }
 
 

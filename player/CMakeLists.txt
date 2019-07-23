@@ -12,6 +12,8 @@ add_library(
         src/main/cpp/ffmpeg.cpp
         src/main/cpp/ffaudio.cpp
         src/main/cpp/ffqueue.cpp
+        src/main/cpp/ffbufferqueue.cpp
+        src/main/cpp/pcmbean.cpp
 
         src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp
         src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp

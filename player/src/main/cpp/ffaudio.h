@@ -8,6 +8,8 @@
 #include "ffqueue.h"
 #include "ffcallback.h"
 #include "SoundTouch.h"
+#include "ffbufferqueue.h"
+#include "androidlog.h"
 using namespace soundtouch;
 
 #define STATUS_INIT (-1)
@@ -87,6 +89,12 @@ public:
     int nb = 0;
     int num = 0;
 
+
+    bool isRecord;
+    pthread_t pcmCallBackThread;
+    FFBufferQueue *bufferQueue = NULL;
+    int defaultPcmSize = 4096;
+
 public:
     FFAudio(FFCallBack* ffCallBack);
     ~FFAudio();
@@ -105,6 +113,7 @@ public:
     void setTempo(float tempo);
 
     int getPCMDB(char *pcmData,size_t pcmSize);
+    void startOrStopRecord(bool start);
 };
 
 

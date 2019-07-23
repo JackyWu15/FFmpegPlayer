@@ -374,5 +374,19 @@ void FFmpeg::setTempo(float tempo) {
     this->ffAudio->setTempo(tempo);
 }
 
+int FFmpeg::getSampleRate() {
+    if(this->ffAudio!=NULL){
+        return  this->ffAudio->avCodecContext->sample_rate;
+    }
+    return 0;
+}
+
+void FFmpeg::startOrStopRecord(bool start) {
+    if(this->ffAudio!=NULL){
+        this->ffAudio->startOrStopRecord(start);
+    }
+
+}
+
 
 

@@ -53,6 +53,10 @@ public:
 
     void video_prepare();
     void video_start(JNIEnv *env, jobject surface);
+
+    int getSampleRate();
+    void startOrStopRecord(bool start);
+
 };
 
 
