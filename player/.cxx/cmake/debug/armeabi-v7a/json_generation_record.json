@@ -1,0 +1,20 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 18 min SDK version: armeabi-v7a",
+    "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/CMakeLists.txt",
+    "tag": "debug|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON \u0027/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a/android_gradle_build.json\u0027 was up-to-date",
+    "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/CMakeLists.txt",
+    "tag": "debug|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/CMakeLists.txt",
+    "tag": "debug|armeabi-v7a"
+  }
+]

@@ -188,8 +188,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     }
 
     private void initData() {
-        mFilePath = Environment.getExternalStorageDirectory()+ File.separator+"Space_o.mp3";
-        //        mFilePath = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
+//        mFilePath = Environment.getExternalStorageDirectory()+ File.separator+"Space O.mp3";
+                mFilePath = "http://mpge.5nd.com/2015/2015-11-26/69708/1.mp3";
         mFFmpegPlayer = new FFPlayer();
         mFFmpegPlayer.setFilePath( mFilePath );
         mFFmpegPlayer.setChannel( ChannelEnum.CENTER );
@@ -232,10 +232,6 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    @Override
-    public synchronized ComponentName startForegroundServiceAsUser(Intent service, UserHandle user) {
-        return null;
-    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {

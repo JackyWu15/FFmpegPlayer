@@ -1,0 +1,7 @@
+Executable : /Users/jackyhe/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/arm64-v8a
+native-lib
+jvmArgs : 
+

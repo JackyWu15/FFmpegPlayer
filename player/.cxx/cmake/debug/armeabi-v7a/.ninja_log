@@ -1,0 +1,27 @@
+# ninja log v5
+3	505	1595672413	CMakeFiles/native-lib.dir/src/main/cpp/ffcallback.cpp.o	eaf2a96978eda67a
+20	1417	1595672414	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/cpu_detect_x86.cpp.o	1528c8446bcb63b4
+13	1428	1595672414	CMakeFiles/native-lib.dir/src/main/cpp/pcmbean.cpp.o	51ff6fbf3bf6fc4f
+24	1441	1595672414	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/sse_optimized.cpp.o	c6b1d0844969be54
+15	1513	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp.o	ae71087055883795
+17	1536	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp.o	6d98720af1837c9b
+26	1557	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/RateTransposer.cpp.o	95db4edffad909e6
+18	1580	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/FIRFilter.cpp.o	ca15c19200ddc770
+505	1654	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateCubic.cpp.o	c43c151b8acf93ab
+28	1693	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/SoundTouch.cpp.o	870d8f0910315471
+1513	1722	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/PeakFinder.cpp.o	c2ed82630ba3dd5c
+11	1988	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/ffbufferqueue.cpp.o	6768387c352e0a1
+9	1989	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/ffqueue.cpp.o	16efc5ee1191b37e
+5	1993	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/ffmpeg.cpp.o	c82a0eca3510dfc3
+7	2001	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/ffaudio.cpp.o	617a57a4c1a944df
+1429	2158	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateShannon.cpp.o	3ce82315527f287e
+1418	2170	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateLinear.cpp.o	363b2779a3ca9d5d
+1441	2281	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/TDStretch.cpp.o	f6e30eb158ec8758
+1	2368	1595672415	CMakeFiles/native-lib.dir/src/main/cpp/ffplayer.cpp.o	d15e7e8699648c32
+2368	2570	1595672416	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	ee59809ba7e8c2bc
+3	463	1595676834	CMakeFiles/native-lib.dir/src/main/cpp/ffmpeg.cpp.o	c82a0eca3510dfc3
+463	589	1595676834	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	ee59809ba7e8c2bc
+3	516	1595677153	CMakeFiles/native-lib.dir/src/main/cpp/ffmpeg.cpp.o	c82a0eca3510dfc3
+516	630	1595677153	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	ee59809ba7e8c2bc
+2	479	1595677366	CMakeFiles/native-lib.dir/src/main/cpp/ffmpeg.cpp.o	c82a0eca3510dfc3
+479	607	1595677366	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	ee59809ba7e8c2bc

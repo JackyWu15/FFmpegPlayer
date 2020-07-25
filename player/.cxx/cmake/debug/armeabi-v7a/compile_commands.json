@@ -1,0 +1,115 @@
+[
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffplayer.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffplayer.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffplayer.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffcallback.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffcallback.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffcallback.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffmpeg.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffmpeg.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffmpeg.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffaudio.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffaudio.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffaudio.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffqueue.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffqueue.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffqueue.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/ffbufferqueue.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffbufferqueue.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/ffbufferqueue.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/pcmbean.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/pcmbean.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/pcmbean.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/AAFilter.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/FIFOSampleBuffer.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/FIRFilter.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/FIRFilter.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/FIRFilter.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/cpu_detect_x86.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/cpu_detect_x86.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/cpu_detect_x86.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/sse_optimized.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/sse_optimized.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/sse_optimized.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/RateTransposer.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/RateTransposer.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/RateTransposer.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/SoundTouch.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/SoundTouch.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/SoundTouch.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateCubic.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateCubic.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateCubic.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateLinear.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateLinear.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateLinear.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/InterpolateShannon.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateShannon.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/InterpolateShannon.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/TDStretch.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/TDStretch.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/TDStretch.cpp"
+},
+
+{
+  "directory": "/Users/jackyhe/Projects/FFmpegPlayer/player/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi18 --gcc-toolchain=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jackyhe/Library/Android/sdk/ndk/21.2.6472646/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_lib_EXPORTS -I../../../../src/main/cpp/include -I../../../../src/main/cpp/soundtouch/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++11 -DANDROID_ARM_MODE=arm -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles/native-lib.dir/src/main/cpp/soundtouch/SoundTouch/PeakFinder.cpp.o -c /Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/PeakFinder.cpp",
+  "file": "/Users/jackyhe/Projects/FFmpegPlayer/player/src/main/cpp/soundtouch/SoundTouch/PeakFinder.cpp"
+}
+]

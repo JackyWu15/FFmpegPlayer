@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.UserHandle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -16,6 +17,7 @@ import com.hechuangwu.player.listener.OnPlayerListener;
 import java.io.File;
 
 public class VideoActivity extends Activity implements SurfaceHolder.Callback {
+    private static final String TAG = "VideoActivity";
     private SurfaceView mSv_video;
     private FFPlayer mFFPlayer;
 
@@ -30,7 +32,8 @@ public class VideoActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(final SurfaceHolder holder) {
-        String path = Environment.getExternalStorageDirectory() + File.separator + "Forrest_Gump_IMAX.mp4";
+        String path = getExternalCacheDir().getAbsolutePath()+ File.separator + "Forrest_Gump_IMAX.flv";
+        Log.i(TAG,getExternalCacheDir().getAbsolutePath());
         mFFPlayer = new FFPlayer();
         mFFPlayer.setFilePath( path );
         mFFPlayer.videoPrepare();
@@ -87,8 +90,4 @@ public class VideoActivity extends Activity implements SurfaceHolder.Callback {
 
     }
 
-    @Override
-    public synchronized ComponentName startForegroundServiceAsUser(Intent service, UserHandle user) {
-        return null;
-    }
 }

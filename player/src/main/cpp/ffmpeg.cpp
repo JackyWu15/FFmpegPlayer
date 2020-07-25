@@ -31,8 +31,6 @@ void FFmpeg::decodeAudio() {
     pthread_mutex_lock(&playMutex);
     //注册所有解码器
     av_register_all();
-    //初始化网络连接组件
-    avformat_network_init();
     //分配上下文
     avFormatContext = avformat_alloc_context();
     //打开地址成功返回0
@@ -217,7 +215,7 @@ void FFmpeg::video_prepare() {
 
     ret = avformat_open_input(&avFormatContext, this->filePath, NULL, NULL);
     if (ret != 0) {
-        LOGE("avformat_open_input error file is %s", this->filePath);
+        LOGE("avformat_open_input error is %s,file is %s", av_err2str(ret),filePath);
         return;
     }
 
